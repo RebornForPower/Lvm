@@ -20,7 +20,7 @@ Lmachine::Lmachine()
 //初始化
 bool Lmachine::Init()
 {
-	string Judge;
+	char  Judge;
 	/*
         初始化
 	*/
@@ -30,27 +30,25 @@ bool Lmachine::Init()
 	cout << "|                                    |" << endl;
 	cout << "|                    By: Leviathan   |" << endl;
 	cout << "--------------------------------------" << endl;
-	cout << "请输入输入文件名          " << endl;
-	cout << "					:    " << endl;
+	cout << "Please input code file name  :  " << endl;
 	cin >>CodeFileName;
-	cout << "请输入输出文件名          " << endl;
-	cout << "					:    " << endl;
+	cout << "Please input Output file name : " << endl;
 	cin >> OutFileName;
-    cout << "是否执行 y/n ：" << endl;
+    cout << "Continue ? y/n :" << endl;
 	cin >> Judge;
-	while (Judge != "y" || Judge != "Y" || Judge != "n" || Judge != "N")
+	while (Judge != 'y' || Judge != 'Y' || Judge != 'n' || Judge != 'N')
 	{
-		cout << "请输入正确的指令" << endl;
+		cout << "Please input correct choice" << endl;
 		cin >> Judge;
 	}
-	if (Judge == "y" || Judge == "Y")
+	if (Judge == 'y' || Judge == 'Y')
 	{
 		return true;
 		ofstream fout(String2Char(OutFileName)); //新建输出文件
 		if (fout)
-			cout << OutFileName << "文件新建成功" << endl;
+			cout << OutFileName << "File create success" << endl;
 	}
-	else if (Judge == "n" || Judge == "N")
+	else if (Judge == 'n' || Judge == 'N')
 		return false;
 	else
 		return false;
