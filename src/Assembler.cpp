@@ -1,5 +1,6 @@
 #include "Assembler.h"
 #include "Lmachine.h"
+#include "boost/regex.hpp"
 using namespace std;
 /*
 --------------------------------------------------------------
@@ -11,11 +12,11 @@ Assembler::Assembler()
 	Lmachine * lmachine = new Lmachine;
 }
 //汇编器初始化
-void Assembler::Init(string codefilename,Lmachine *& Reflmachine)
+void Assembler::Init(string codefilename, Lmachine *& Reflmachine)
 {
 	TokenIndex = 0;//将Token记号初始化为0
-	Code->open(codefilename);//打开的指定的汇编代码文件
 	ReadLine();//将FILE类型Code名字读取到LmachineToken中
+	CodeName = codefilename;//获取用户输入的代码名字
 	lmachine = Reflmachine;
 }
 //运行汇编器
@@ -28,7 +29,7 @@ void Assembler::Run_Assembler()
 	TokenType type;
 	BuildSymbolTable();//第一遍扫描 构建符号表
 	/*
-		第2遍扫描，将根据符号表，将源程序写入Memory中
+	第2遍扫描，将根据符号表，将源程序写入Memory中
 	*/
 	for (size_t i = 0; i < LmachineToken.size(); i++)
 	{
@@ -105,7 +106,8 @@ TokenType Assembler::Lexer(Token token, string &Strtoken)
 void Assembler::ReadLine()
 {
 	string Line;
-	while (getline(*Code, Line)) //每行读取汇编代码
+	ifstream Code(CodeName);
+	while (getline(Code, Line)) //每行读取汇编代码
 	{
 		if (boost::regex_search(Line, what, Regex))
 		{
@@ -142,7 +144,7 @@ void Assembler::ReadLine()
 int Assembler::SearchSymbol(string symbolname, int sign)
 {
 	size_t i;
-	for ( i= 0; i < SymbolTable.size(); i++)
+	for (i = 0; i < SymbolTable.size(); i++)
 	{
 		if (symbolname == SymbolTable[i].SymbolName) //在符号表中找到该符号
 			break;
@@ -218,4 +220,3 @@ Bytes Assembler::SearchCmd(Token token)
 		i++;
 	return (Bytes)i;
 }
-

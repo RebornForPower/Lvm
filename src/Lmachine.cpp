@@ -7,6 +7,12 @@ using namespace std;
 |						虚拟机                               |
 --------------------------------------------------------------
 */
+//string 转char *
+char * Lmachine::String2Char(string str)
+{
+	char *Cstr = (char*)str.data();
+	return Cstr;
+}
 //默认无参数构造函数
 Lmachine::Lmachine()
 {
@@ -15,9 +21,9 @@ Lmachine::Lmachine()
 //初始化
 bool Lmachine::Init()
 {
-	string Judge;
+	char  Judge;
 	/*
-		初始化
+	初始化
 	*/
 	cout << "--------------------------------------" << endl;
 	cout << "|         welcome to Lmachine        |" << endl;
@@ -25,27 +31,25 @@ bool Lmachine::Init()
 	cout << "|                                    |" << endl;
 	cout << "|                    By: Leviathan   |" << endl;
 	cout << "--------------------------------------" << endl;
-	cout << "请输入输入文件名          " << endl;
-	cout << "					:    " << endl;
-	cin >>CodeFileName;
-	cout << "请输入输出文件名          " << endl;
-	cout << "					:    " << endl;
+	cout << "Please input code file name  :  ";
+	cin >> CodeFileName;
+	cout << "Please input Output file name : ";
 	cin >> OutFileName;
-	cout << "是否执行 y/n ：" << endl;
+	cout << "Continue ? y/n :   ";
 	cin >> Judge;
-	while (Judge != "y" || Judge != "Y" || Judge != "n" || Judge != "N")
+	while (Judge != 'y' && Judge != 'Y' && Judge != 'n' && Judge != 'N')
 	{
-		cout << "请输入正确的指令" << endl;
+		cout << "Please input correct choice" << endl;
 		cin >> Judge;
 	}
-	if (Judge == "y" || Judge == "Y")
+	if (Judge == 'y' || Judge == 'Y')
 	{
-		return true;
-		ofstream fout(OutFileName); //新建输出文件
+		ofstream fout(String2Char(OutFileName)); //新建输出文件
 		if (fout)
-			cout << OutFileName << "文件新建成功" << endl;
+			cout << "File "<<OutFileName<<" already  create success" << endl;
+		return true;
 	}
-	else if (Judge == "n" || Judge == "N")
+	else if (Judge == 'n' || Judge == 'N')
 		return false;
 	else
 		return false;
@@ -116,14 +120,17 @@ void Lmachine::LmachineRun()
 		case OpCLEARI://变址寄存器清0
 			Lcpu.IndexRegister = 0;
 			break;
-		//case OpINAXD:	//将10进制数写入累加器
-		//case OpINAXB:	//将2进制数写入累加器
-		//case OpINAXA:	//将ascii字符写入累加器
+			//case OpINAXD:	//将10进制数写入累加器
+			//case OpINAXB:	//将2进制数写入累加器
+			//case OpINAXA:	//将ascii字符写入累加器
 		case OpOUTAXD:	//将累加器数据以10进制形式输出
 			if (Lcpu.Accumulator < 128)
+			{
+				ofstream fout(String2Char(OutFileName)); //打开文件
 				fout << Lcpu.Accumulator; //写入文件
-		//case OpOUTAXB:	//将累加器数据以2进制形式输出
-		//case OpOUTAXA:	//将累加器数据以ascii字符形式输出
+			}
+			//case OpOUTAXB:	//将累加器数据以2进制形式输出
+			//case OpOUTAXA:	//将累加器数据以ascii字符形式输出
 
 		case OpINCAX://累加器加1，影响标志器
 			Increment(Lcpu.Accumulator);
@@ -180,7 +187,7 @@ void Lmachine::LmachineRun()
 			Memory[Index()] = Lcpu.Accumulator;
 			Increment(Lcpu.Accumulator);
 			break;
-				//加法
+			//加法
 		case OpADDB://A=A+[B]
 			Lcpu.Carry = (Lcpu.Accumulator + Memory[Lcpu.ProgramCounter] > 255); //是否进位
 			Lcpu.Accumulator = (Lcpu.Accumulator + Memory[Memory[Lcpu.ProgramCounter]]) % 256;//限定数值的大小
@@ -220,7 +227,7 @@ void Lmachine::LmachineRun()
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-				//减法
+			//减法
 		case OpSUBB://A=A-[B]
 			Lcpu.Carry = (Lcpu.Accumulator < Memory[Memory[Lcpu.ProgramCounter]]);
 			Lcpu.Accumulator = (Lcpu.Accumulator - Memory[Memory[Lcpu.ProgramCounter]] + 256) % 256;
@@ -260,7 +267,7 @@ void Lmachine::LmachineRun()
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-				//比较
+			//比较
 		case OpCMPB://A与[B]内容进行比较，影响标志位
 			Lcpu.Carry = (Lcpu.Accumulator < Memory[Memory[Lcpu.ProgramCounter]]);
 			SetFlags((Lcpu.Accumulator - Memory[Memory[Lcpu.ProgramCounter]] + 256) % 256);
@@ -274,7 +281,7 @@ void Lmachine::LmachineRun()
 			Lcpu.Carry = (Lcpu.Accumulator < Memory[Lcpu.ProgramCounter]);
 			SetFlags((Lcpu.Accumulator - Memory[Lcpu.ProgramCounter] + 256) % 256);
 			break;
-				//与
+			//与
 		case OpANDB://A与[B]的内容位与，影响标志位
 			Lcpu.Accumulator = Lcpu.Accumulator & Memory[Memory[Lcpu.ProgramCounter]];
 			Increment(Lcpu.ProgramCounter);
@@ -293,7 +300,7 @@ void Lmachine::LmachineRun()
 			SetFlags(Lcpu.Accumulator);
 			Lcpu.Carry = false;
 			break;
-				//或
+			//或
 		case OpORB://A与[B]的内容位或，影响标志位
 			Lcpu.Accumulator = Lcpu.Accumulator | Memory[Memory[Lcpu.ProgramCounter]];
 			Increment(Lcpu.ProgramCounter);
@@ -309,12 +316,12 @@ void Lmachine::LmachineRun()
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-				//跳转
+			//跳转
 		case OpJMPB://跳转到B地址
 			Lcpu.ProgramCounter = Memory[Lcpu.ProgramCounter];
 			break;
 		case OpJZB://如果Z标志为1，跳转到B单元
-			if (Lcpu.Zero==1)
+			if (Lcpu.Zero == 1)
 				Lcpu.ProgramCounter = Memory[Lcpu.ProgramCounter];
 			else
 				Increment(Lcpu.ProgramCounter);
@@ -332,7 +339,7 @@ void Lmachine::LmachineRun()
 				Increment(Lcpu.ProgramCounter);
 			break;
 		case OpJNSB://如果S标志为0，跳转到B单元
-			if (Lcpu.Sign ==0)
+			if (Lcpu.Sign == 0)
 				Lcpu.ProgramCounter = Memory[Lcpu.ProgramCounter];
 			else
 				Increment(Lcpu.ProgramCounter);
@@ -349,10 +356,10 @@ void Lmachine::LmachineRun()
 			else
 				Increment(Lcpu.ProgramCounter);
 			break;
-	default:
+		default:
 			break;
 		}
-	}while (LcpuStatus == Running);
+	} while (LcpuStatus == Running);
 	if (LcpuStatus == Finished&&LError == NoneError)
 		LendStatus = Success;
 	else
@@ -362,5 +369,5 @@ void Lmachine::LmachineRun()
 //返回机器指令i的助记符,也就是汇编指令
 string Lmachine::GetMemonic(int i)
 {
-		return  OpMemonic[i];
+	return  OpMemonic[i];
 }

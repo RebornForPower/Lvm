@@ -1,5 +1,6 @@
 #include "Lmachine.h"
 #include "Assembler.h"
+#include <boost/regex.hpp>
 
 using namespace std;
 
@@ -14,6 +15,6 @@ int main()
 		assembler->Run_Assembler();
 		lmachine->LmachineRun();
 	}
-	else //不成功
+	else //初始化不成功
 		return 0;
 }
