@@ -4,7 +4,7 @@
 using namespace std;
 /*
 --------------------------------------------------------------
-|						ÐéÄâ»ú                               |
+|						è™šæ‹Ÿæœº                                |
 --------------------------------------------------------------
 */
 //string ×ªchar *
@@ -13,17 +13,17 @@ char * Lmachine::String2Char(string str)
 	char *Cstr = (char*)str.data();
 	return Cstr;
 }
-//Ä¬ÈÏÎÞ²ÎÊý¹¹Ôìº¯Êý
+//
 Lmachine::Lmachine()
 {
 
 }
-//³õÊ¼»¯
+//
 bool Lmachine::Init()
 {
 	char  Judge;
 	/*
-	³õÊ¼»¯
+	
 	*/
 	cout << "--------------------------------------" << endl;
 	cout << "|         welcome to Lmachine        |" << endl;
@@ -44,7 +44,7 @@ bool Lmachine::Init()
 	}
 	if (Judge == 'y' || Judge == 'Y')
 	{
-		ofstream fout(String2Char(OutFileName)); //ÐÂ½¨Êä³öÎÄ¼þ
+		ofstream fout(String2Char(OutFileName)); //
 		if (fout)
 			cout << "File "<<OutFileName<<" already  create success" << endl;
 		return true;
@@ -55,13 +55,13 @@ bool Lmachine::Init()
 		return false;
 }
 
-//Éè¶¨±êÖ¾¼Ä´æÆ÷
+//
 void Lmachine::SetFlags(Bytes Register)
 {
 	Lcpu.Zero = (Register == 0);
 	Lcpu.ProgramCounter = (Register <= 127);
 }
-//È¡µÃstringÀàÐÍtokenËù¶ÔÓ¦µÄ»úÆ÷Ö¸Áî
+//
 Bytes Lmachine::Opcode(string token)
 {
 	Bytes Op = OpHALT;
@@ -70,28 +70,28 @@ Bytes Lmachine::Opcode(string token)
 	if (Op < MaxInstuction)
 		return Op;
 	else
-		return OpError;//·µ»Ø´íÎóÖ¸ÁîµÄ´úÂë
+		return OpError;//
 }
-//¼ÆËã±äÖ·µØÖ· X+B
+// X+B
 Bytes Lmachine::Index()
 {
 	return ((Memory[Lcpu.ProgramCounter] + Lcpu.Accumulator) % 256);
 }
-//Ö´ÐÐ¼Ó1²Ù×÷
+//
 void Lmachine::Increment(Bytes & data)
 {
 	data = (data + 257) % 256;
 }
-//Ö´ÐÐ¼õ1²Ù×÷
+//
 void Lmachine::Decrement(Bytes & data)
 {
 	data = (data + 255) % 256;
 }
-//ÐéÄâ»úÖ´ÐÐÄÚ´æÖÐµÄ»ã±àÖ¸Áî
+//
 void Lmachine::LmachineRun()
 {
-	Bytes ProgramValue;//±£´æPCµÄµ±Ç°Öµ
-	Bytes Carry;//³ÌÐò½øÎ»Î»µÄ×´Ì¬
+	Bytes ProgramValue;//
+	Bytes Carry;//
 	Lcpu.Carry = false;
 	Lcpu.Zero = false;
 	Lcpu.Sign = false;
@@ -99,83 +99,83 @@ void Lmachine::LmachineRun()
 	Lcpu.IndexRegister = 0;
 	Lcpu.BasePointer = 0;
 	Lcpu.StackPointer = 0;
-	Lcpu.ProgramCounter = 0;//³ÌÐò¿ªÊ¼Î»ÖÃ
-	LcpuStatus = Running;//CPUÔËÐÐ×´Ì¬
+	Lcpu.ProgramCounter = 0;//
+	LcpuStatus = Running;//
 	do
 	{
-		Lcpu.InstructionRegister = Memory[Lcpu.ProgramCounter];//´ÓÄÚ´æÖÐÈ¡Ö¸ÁîËÍÈëÖ¸Áî¼Ä´æÆ÷
+		Lcpu.InstructionRegister = Memory[Lcpu.ProgramCounter];//
 		ProgramValue = Lcpu.ProgramCounter;
-		Increment(Lcpu.ProgramCounter);//PCÖ¸ÏòÏòÒ»Ìõ½«ÒªÖ´ÐÐµÄÖ¸ÁîµØÖ·
+		Increment(Lcpu.ProgramCounter);//
 		switch (Lcpu.InstructionRegister)
 		{
-		case OpHALT:	//CPUÔÝÍ£Ö¸Áî ¸ñÊ½£ºHALT
+		case OpHALT:	// 
 			LcpuStatus = Finished;
 			break;
-		case OpCLEARAX:	//ÀÛ¼ÓÆ÷Çå0
+		case OpCLEARAX:	//
 			Lcpu.Accumulator = 0;
 			break;
-		case OpClEARC:	//½øÎ»±êÖ¾Æ÷Çå0
+		case OpClEARC:	//
 			Lcpu.Carry = 0;
 			break;
-		case OpCLEARI://±äÖ·¼Ä´æÆ÷Çå0
+		case OpCLEARI://ï¿½ï¿½Ö·ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½0
 			Lcpu.IndexRegister = 0;
 			break;
-			//case OpINAXD:	//½«10½øÖÆÊýÐ´ÈëÀÛ¼ÓÆ÷
-			//case OpINAXB:	//½«2½øÖÆÊýÐ´ÈëÀÛ¼ÓÆ÷
-			//case OpINAXA:	//½«ascii×Ö·ûÐ´ÈëÀÛ¼ÓÆ÷
-		case OpOUTAXD:	//½«ÀÛ¼ÓÆ÷Êý¾ÝÒÔ10½øÖÆÐÎÊ½Êä³ö
+			//case OpINAXD:	
+			//case OpINAXB:	
+			//case OpINAXA:	
+		case OpOUTAXD:	//
 			if (Lcpu.Accumulator < 128)
 			{
-				ofstream fout(String2Char(OutFileName)); //´ò¿ªÎÄ¼þ
-				fout << Lcpu.Accumulator; //Ð´ÈëÎÄ¼þ
+				ofstream fout(String2Char(OutFileName)); //
+				fout << Lcpu.Accumulator; //
 			}
-			//case OpOUTAXB:	//½«ÀÛ¼ÓÆ÷Êý¾ÝÒÔ2½øÖÆÐÎÊ½Êä³ö
-			//case OpOUTAXA:	//½«ÀÛ¼ÓÆ÷Êý¾ÝÒÔascii×Ö·ûÐÎÊ½Êä³ö
+			//case OpOUTAXB:
+			//case OpOUTAXA:
 
-		case OpINCAX://ÀÛ¼ÓÆ÷¼Ó1£¬Ó°Ïì±êÖ¾Æ÷
+		case OpINCAX:
 			Increment(Lcpu.Accumulator);
 			SetFlags(Lcpu.Accumulator);
 			break;
-		case OpDECAX://ÀÛ¼ÓÆ÷¼õ1£¬Ó°Ïì±êÖ¾Æ÷
+		case OpDECAX:
 			Decrement(Lcpu.Accumulator);
 			SetFlags(Lcpu.Accumulator);
 			break;
-		case OpINCI://±äÖ·¼Ä´æÆ÷¼Ó1£¬Ó°Ïì±êÖ¾Æ÷
+		case OpINCI:
 			Increment(Lcpu.IndexRegister);
 			SetFlags(Lcpu.IndexRegister);
 			break;
-		case OpDECI://±äÖ·¼Ä´æÆ÷¼õ1£¬Ó°Ïì±êÖ¾Æ÷
+		case OpDECI:
 			Decrement(Lcpu.IndexRegister);
 			SetFlags(Lcpu.IndexRegister);
 			break;
-		case OpAXTOI://ÀÛ¼ÓÆ÷ÄÚÈÝËÍÈë±äÖ·¼Ä´æÆ÷ x
+		case OpAXTOI:
 			Lcpu.IndexRegister = Lcpu.Accumulator;
 			break;
-		case OpPUSH://Ñ¹Õ»£¬¶ÑÕ»Ö¸Õë¼õ1£¬ÀÛ¼ÓÆ÷µÄÄÚÈÝÑ¹ÈëÕ»¶¥¡£
+		case OpPUSH:
 			Decrement(Lcpu.StackPointer);
 			Memory[Lcpu.StackPointer] = Lcpu.Accumulator;
 			break;
-		case OpPOP://³öÕ»£¬¶ÑÕ»Ö¸Õë¼Ó1£¬½«Õ»¶¥ÄÚÈÝÑ¹ÈëÕ»ÄÚ
+		case OpPOP:
 			Lcpu.Accumulator = Memory[Lcpu.StackPointer];
 			Increment(Lcpu.StackPointer);
 			Memory[Lcpu.StackPointer] = Lcpu.Accumulator;
 			break;
-		case OpLOADBAX://¸ñÊ½ LDA B £¬½«BµØÖ·µ¥ÔªÖÐµÄÄÚÈÝËÍÈëÀÛ¼ÓÆ÷ÖÐ£¬ÒÔµ±Ç°PCËùÖ¸ÄÚ´æµÄÊýÖµ×÷ÎªµØÖ·Æ«ÒÆ
+		case OpLOADBAX:
 			Lcpu.Accumulator = Memory[Memory[Lcpu.ProgramCounter]];
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-		case OpLOADIBAX://½«±äÖ·¼Ä´æÆ÷+Á¢¼´ÊýBËùÖ¸µÄÄÚ´æµ¥ÔªµÄÄÚÈÝËÍÈëÀÛ¼ÓÆ÷ A=[I+B]
+		case OpLOADIBAX:
 			Lcpu.Accumulator = Memory[Index()];
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-		case OpLOADVBAX://½«Á¢¼´ÊýBËÍÈëÀÛ¼ÓÆ÷
+		case OpLOADVBAX:
 			Lcpu.Accumulator = Memory[Lcpu.ProgramCounter];
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-		case OpLOADVBSP://½«Á¢¼´ÊýBÖÐµÄÄÚÈÝËÍµ½SP¼Ä´æÆ÷
+		case OpLOADVBSP:
 			Lcpu.StackPointer = Memory[Memory[Lcpu.ProgramCounter]];
 			Increment(Lcpu.ProgramCounter);
 			break;
@@ -187,15 +187,15 @@ void Lmachine::LmachineRun()
 			Memory[Index()] = Lcpu.Accumulator;
 			Increment(Lcpu.Accumulator);
 			break;
-			//¼Ó·¨
+			//
 		case OpADDB://A=A+[B]
-			Lcpu.Carry = (Lcpu.Accumulator + Memory[Lcpu.ProgramCounter] > 255); //ÊÇ·ñ½øÎ»
-			Lcpu.Accumulator = (Lcpu.Accumulator + Memory[Memory[Lcpu.ProgramCounter]]) % 256;//ÏÞ¶¨ÊýÖµµÄ´óÐ¡
+			Lcpu.Carry = (Lcpu.Accumulator + Memory[Lcpu.ProgramCounter] > 255); //
+			Lcpu.Accumulator = (Lcpu.Accumulator + Memory[Memory[Lcpu.ProgramCounter]]) % 256;//
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
 		case OpADDIB://A=A+[I+B]
-			Lcpu.Carry = (Lcpu.Accumulator + Memory[Index()] > 255); //ÊÇ·ñ½øÎ»
+			Lcpu.Carry = (Lcpu.Accumulator + Memory[Index()] > 255); //
 			Lcpu.Accumulator = (Lcpu.Accumulator + Memory[Index()]) % 256;
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
@@ -206,7 +206,7 @@ void Lmachine::LmachineRun()
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-		case OpADCB://A=A+C+[B] ´ø½øÎ»Î»
+		case OpADCB:
 			Carry = Lcpu.Carry;
 			Lcpu.Carry = (Lcpu.Accumulator + Memory[Memory[Lcpu.ProgramCounter]] + Carry) > 255;
 			Lcpu.Accumulator = (Lcpu.Accumulator + Memory[Memory[Lcpu.ProgramCounter]] + Carry) % 256;
@@ -227,7 +227,7 @@ void Lmachine::LmachineRun()
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-			//¼õ·¨
+			//
 		case OpSUBB://A=A-[B]
 			Lcpu.Carry = (Lcpu.Accumulator < Memory[Memory[Lcpu.ProgramCounter]]);
 			Lcpu.Accumulator = (Lcpu.Accumulator - Memory[Memory[Lcpu.ProgramCounter]] + 256) % 256;
@@ -267,90 +267,90 @@ void Lmachine::LmachineRun()
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-			//±È½Ï
-		case OpCMPB://AÓë[B]ÄÚÈÝ½øÐÐ±È½Ï£¬Ó°Ïì±êÖ¾Î»
+			//
+		case OpCMPB:
 			Lcpu.Carry = (Lcpu.Accumulator < Memory[Memory[Lcpu.ProgramCounter]]);
 			SetFlags((Lcpu.Accumulator - Memory[Memory[Lcpu.ProgramCounter]] + 256) % 256);
 			Increment(Lcpu.ProgramCounter);
 			break;
-		case OpCMPIB://AÓë[B+I]ÄÚÈÝ½øÐÐ±È½Ï£¬Ó°Ïì±êÖ¾Î»
+		case OpCMPIB:
 			Lcpu.Carry = (Lcpu.Accumulator < Memory[Index()]);
 			SetFlags((Lcpu.Accumulator - Memory[Index()] + 256) % 256);
 			break;
-		case OpCMPVB://AÓëB±È½Ï£¬Ó°Ïì±êÖ¾Î»
+		case OpCMPVB://Aï¿½ï¿½Bï¿½È½Ï£ï¿½Ó°ï¿½ï¿½ï¿½ï¿½Ö¾Î»
 			Lcpu.Carry = (Lcpu.Accumulator < Memory[Lcpu.ProgramCounter]);
 			SetFlags((Lcpu.Accumulator - Memory[Lcpu.ProgramCounter] + 256) % 256);
 			break;
-			//Óë
-		case OpANDB://AÓë[B]µÄÄÚÈÝÎ»Óë£¬Ó°Ïì±êÖ¾Î»
+			//
+		case OpANDB:
 			Lcpu.Accumulator = Lcpu.Accumulator & Memory[Memory[Lcpu.ProgramCounter]];
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			Lcpu.Carry = false;
 			break;
-		case OpANDVB://AÓëBÎ»Óë£¬Ó°Ïì±êÖ¾Î»
+		case OpANDVB:
 			Lcpu.Accumulator = Lcpu.Accumulator & Memory[Lcpu.ProgramCounter];
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			Lcpu.Carry = false;
 			break;
-		case OpANDIB://AÓë[I+B]Î»Óë£¬Ó°Ïì±êÖ¾Î»
+		case OpANDIB:
 			Lcpu.Accumulator = Lcpu.Accumulator & Memory[Index()];
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			Lcpu.Carry = false;
 			break;
-			//»ò
-		case OpORB://AÓë[B]µÄÄÚÈÝÎ»»ò£¬Ó°Ïì±êÖ¾Î»
+			
+		case OpORB:
 			Lcpu.Accumulator = Lcpu.Accumulator | Memory[Memory[Lcpu.ProgramCounter]];
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-		case OpORVB://AÓëBÎ»»ò£¬Ó°Ïì±êÖ¾Î»
+		case OpORVB:
 			Lcpu.Accumulator = Lcpu.Accumulator | Memory[Lcpu.ProgramCounter];
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-		case OpORIB://AÓë[I+B]Î»»ò£¬Ó°Ïì±êÖ¾Î»
+		case OpORIB:
 			Lcpu.Accumulator = Lcpu.Accumulator | Memory[Index()];
 			Increment(Lcpu.ProgramCounter);
 			SetFlags(Lcpu.Accumulator);
 			break;
-			//Ìø×ª
-		case OpJMPB://Ìø×ªµ½BµØÖ·
+			
+		case OpJMPB:
 			Lcpu.ProgramCounter = Memory[Lcpu.ProgramCounter];
 			break;
-		case OpJZB://Èç¹ûZ±êÖ¾Îª1£¬Ìø×ªµ½Bµ¥Ôª
+		case OpJZB:
 			if (Lcpu.Zero == 1)
 				Lcpu.ProgramCounter = Memory[Lcpu.ProgramCounter];
 			else
 				Increment(Lcpu.ProgramCounter);
 			break;
-		case OpJNZB://Èç¹ûZ±êÖ¾Îª0£¬Ìø×ªµ½Bµ¥Ôª
+		case OpJNZB:
 			if (Lcpu.Zero == 0)
 				Lcpu.ProgramCounter = Memory[Lcpu.ProgramCounter];
 			else
 				Increment(Lcpu.ProgramCounter);
 			break;
-		case OpJSB://Èç¹ûS±êÖ¾Îª1£¬Ìø×ªµ½Bµ¥Ôª
+		case OpJSB:
 			if (Lcpu.Sign == 1)
 				Lcpu.ProgramCounter = Memory[Lcpu.ProgramCounter];
 			else
 				Increment(Lcpu.ProgramCounter);
 			break;
-		case OpJNSB://Èç¹ûS±êÖ¾Îª0£¬Ìø×ªµ½Bµ¥Ôª
+		case OpJNSB:
 			if (Lcpu.Sign == 0)
 				Lcpu.ProgramCounter = Memory[Lcpu.ProgramCounter];
 			else
 				Increment(Lcpu.ProgramCounter);
 			break;
-		case OpJC://Èç¹ûC±êÖ¾Îª1£¬Ìø×ªµ½Bµ¥Ôª
+		case OpJC:
 			if (Lcpu.Carry == 1)
 				Lcpu.ProgramCounter = Memory[Lcpu.ProgramCounter];
 			else
 				Increment(Lcpu.ProgramCounter);
 			break;
-		case OpJNC://Èç¹ûC±êÖ¾Îª0£¬Ìø×ªµ½Bµ¥Ôª
+		case OpJNC:
 			if (Lcpu.Carry == 1)
 				Lcpu.ProgramCounter = Memory[Lcpu.ProgramCounter];
 			else
@@ -366,7 +366,7 @@ void Lmachine::LmachineRun()
 		LendStatus = Failed;
 
 }
-//·µ»Ø»úÆ÷Ö¸ÁîiµÄÖú¼Ç·û,Ò²¾ÍÊÇ»ã±àÖ¸Áî
+
 string Lmachine::GetMemonic(int i)
 {
 	return  OpMemonic[i];

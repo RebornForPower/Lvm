@@ -4,51 +4,49 @@
 using namespace std;
 /*
 --------------------------------------------------------------
-|						»ã±àÆ÷                               |
+|						æ±‡ç¼–å™¨                                |
 --------------------------------------------------------------
 */
 Assembler::Assembler()
 {
 	Lmachine * lmachine = new Lmachine;
 }
-//»ã±àÆ÷³õÊ¼»¯
+//
 void Assembler::Init(string codefilename, Lmachine *& Reflmachine)
 {
-	TokenIndex = 0;//½«Token¼ÇºÅ³õÊ¼»¯Îª0
-	ReadLine();//½«FILEÀàĞÍCodeÃû×Ö¶ÁÈ¡µ½LmachineTokenÖĞ
-	CodeName = codefilename;//»ñÈ¡ÓÃ»§ÊäÈëµÄ´úÂëÃû×Ö
+	TokenIndex = 0;//
+	ReadLine();//
+	CodeName = codefilename;//
 	lmachine = Reflmachine;
 }
-//ÔËĞĞ»ã±àÆ÷
+//
 void Assembler::Run_Assembler()
 {
 	int labelindex, number;
-	Bytes lc = 0;//µØÖ·¼ÆÊıÆ÷
+	Bytes lc = 0;
 	Bytes Op;
 	string Strtoken;
 	TokenType type;
-	BuildSymbolTable();//µÚÒ»±éÉ¨Ãè ¹¹½¨·ûºÅ±í
-	/*
-	µÚ2±éÉ¨Ãè£¬½«¸ù¾İ·ûºÅ±í£¬½«Ô´³ÌĞòĞ´ÈëMemoryÖĞ
-	*/
+	BuildSymbolTable();
+	
 	for (size_t i = 0; i < LmachineToken.size(); i++)
 	{
 		type = Lexer(LmachineToken[i], Strtoken);
 		switch (type)
 		{
-		case ASMCode://»ã±àÖ¸Áî
-			Op = lmachine->Opcode(Strtoken); //²éÑ¯»ã±àÖ¸Áî´ú±íµÄ»úÆ÷Ö¸Áî
-			if (Op == OpError) //´íÎóÖ¸Áî£¬»ò²»´æÔÚµÄÖ¸Áî
+		case ASMCode://ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+			Op = lmachine->Opcode(Strtoken); 
+			if (Op == OpError) 
 			{
 				cout << "error mnemonic " << Strtoken << endl;
 			}
-			lmachine->Memory[lc] = Op; //´æ´¢Ö¸Áîµ½ĞéÄâ»úµÄÄÚ´æÖĞ
-			lc = (lc + 1) % MemSize;//µØÖ·¼ÆÆ÷¼Ó1
+			lmachine->Memory[lc] = Op; 
+			lc = (lc + 1) % MemSize;
 			break;
-		case ReferLabel://¶ÔµØÖ·±êºÅµÄÒıÓÃ
+		case ReferLabel://ï¿½Ôµï¿½Ö·ï¿½ï¿½ï¿½Åµï¿½ï¿½ï¿½ï¿½ï¿½
 			Strtoken += ":";
-			labelindex = SearchSymbol(Strtoken, 1); //ÔÚ·ûºÅ±íËÑÑ°£¬ÇÒ»ñÈ¡±êºÅµÄÏÂ±ê
-			if (labelindex == -1)//²»´æÔÚ
+			labelindex = SearchSymbol(Strtoken, 1); 
+			if (labelindex == -1)
 			{
 				cout << "Error: no such a lable" << Strtoken << endl;
 			}
@@ -71,26 +69,26 @@ void Assembler::Run_Assembler()
 
 	}
 }
-//»ã±à´úÂë×Ö·ûÁ÷·ÖÎö
+
 TokenType Assembler::Lexer(Token token, string &Strtoken)
 {
 	TokenType type;
 	Bytes command;
-	if (isalpha(token.GetID()[0])) //ÊÇµØÖ·±êºÅ»ò»ã±àÖ¸Áî
+	if (isalpha(token.GetID()[0])) 
 	{
 		command = SearchCmd(token);
 		if (command == MaxInstuction&&LmachineToken[TokenIndex + 1].GetID() == ":")
 		{
-			type = Lablel;//È·¶¨ÎªµØÖ·±êºÅµÄ¶¨Òå
+			type = Lablel;
 			Strtoken = token.GetID() + LmachineToken[TokenIndex + 1].GetID();
 		}
 		else if (command == MaxInstuction&&LmachineToken[TokenIndex + 1].GetID() != ":")
 		{
-			type = ReferLabel;//È·¶¨¶ÔµØÖ·±êºÅµÄÒıÓÃ
+			type = ReferLabel;
 			Strtoken = token.GetID();
 		}
 		else
-			type = ASMCode;//È·¶¨Îª»ã±àÖ¸Áî
+			type = ASMCode;
 
 	}
 	else if (isdigit(token.GetID()[0]))
@@ -102,12 +100,12 @@ TokenType Assembler::Lexer(Token token, string &Strtoken)
 		type = UnKnown;
 	return type;
 }
-//½«FILEÀàĞÍCodeÃû×Ö¶ÁÈ¡µ½LmachineTokenÖĞ
+
 void Assembler::ReadLine()
 {
 	string Line;
 	ifstream Code(CodeName);
-	while (getline(Code, Line)) //Ã¿ĞĞ¶ÁÈ¡»ã±à´úÂë
+	while (getline(Code, Line)) 
 	{
 		if (boost::regex_search(Line, what, Regex))
 		{
@@ -140,26 +138,26 @@ void Assembler::ReadLine()
 		}
 	}
 }
-//ÔÚ·ûºÅ±íÖĞ²éÕÒ·ûºÅ,sign=0,ÅĞ¶ÏÊÇ·ñ½øĞĞÁËÖØ¸´¶¨Òå£¬sign=1,ÊÇ·ñÒÑ¾­ÓĞ¸Ã·ûºÅ£¬½øĞĞ¸üĞÂ
+
 int Assembler::SearchSymbol(string symbolname, int sign)
 {
 	size_t i;
 	for (i = 0; i < SymbolTable.size(); i++)
 	{
-		if (symbolname == SymbolTable[i].SymbolName) //ÔÚ·ûºÅ±íÖĞÕÒµ½¸Ã·ûºÅ
+		if (symbolname == SymbolTable[i].SymbolName) 
 			break;
 	}
 	if (i < SymbolTable.size() && sign == 0)
 	{
 		cout << "the label" << symbolname << "is already defined" << endl;
-		return -2;//±êºÅÖØ¸´¶¨Òå
+		return -2;
 	}
 	else if (i < SymbolTable.size() && sign == 1)
-		return i;//·µ»Ø±êºÅÔÚ·ûºÅ±íÖĞµÄÏÂ±ê£¬ÓÃÓÚ¸üĞÂ
+		return i;
 	else
-		return -1;//·ûºÅ²»´æÔÚ
+		return -1;
 }
-//¹¹Ôì·ûºÅ±í
+
 void Assembler::BuildSymbolTable()
 {
 	int labelindex;
@@ -170,8 +168,8 @@ void Assembler::BuildSymbolTable()
 		type = Lexer(LmachineToken[TokenIndex], Strtoken);
 		switch (type)
 		{
-		case Lablel:	//ĞÂ¶¨Òå±êºÅ£¬¼ÓÈë·ûºÅ±í
-			if (SearchSymbol(LmachineToken[TokenIndex].GetID(), 0) == -1)//·ûºÅ²»´æÔÚ
+		case Lablel:	
+			if (SearchSymbol(LmachineToken[TokenIndex].GetID(), 0) == -1)
 			{
 				Symbol symbol;
 				symbol.SymbolName = Strtoken;
@@ -179,11 +177,11 @@ void Assembler::BuildSymbolTable()
 				symbol.First = NULL;
 			}
 			break;
-		case ReferLabel://±êºÅµØÖ·µÄÒıÓÃ£¬¼´ÒÑ´æÔÚ£¬¸üĞÂ
+		case ReferLabel://ï¿½ï¿½ï¿½Åµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½
 			Strtoken += ":";
 			labelindex = SearchSymbol(Strtoken, 1);
-			if (labelindex == -1) //·ûºÅ±í²»´æÔÚ
-				cout << "the label" << Strtoken << "is not defined" << endl;//ÌáÊ¾ÒıÓÃÁË£¬µ«ÊÇ²¢Î´¶¨Òå
+			if (labelindex == -1) 
+				cout << "the label" << Strtoken << "is not defined" << endl;
 			else
 			{
 				SymbolReferenceNode *newnode = new SymbolReferenceNode;
@@ -204,7 +202,7 @@ void Assembler::BuildSymbolTable()
 				}
 			}
 			break;
-		case UnKnown:	//²»¿ÉÊ¶±ğµÄ·ûºÅ
+		case UnKnown:	
 			cout << "the label" << Strtoken << "is Unknown" << endl;
 			break;
 		default:
@@ -212,7 +210,7 @@ void Assembler::BuildSymbolTable()
 		}
 	}
 }
-//²éÑ¯»ã±àÖ¸Áî±í£¬·µ»Ø¶ÔÓ¦µÄ»úÆ÷Ö¸Áî£¬»úÆ÷Ö¸ÁîÒşº¬ÎªÖ¸ÁîÊı×éµÄÏÂ±ê
+
 Bytes Assembler::SearchCmd(Token token)
 {
 	int i = 0;

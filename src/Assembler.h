@@ -3,7 +3,7 @@
 #include "Global.h"
 using namespace std;
 class Lmachine;
-//¿¿¿
+//æ±‡ç¼–å™¨
 class Assembler
 {
 public:

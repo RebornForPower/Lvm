@@ -7,34 +7,30 @@
 #include <fstream>
 using namespace std;
 
-//ĞéÄâ»ú
+//è™šæ‹Ÿæœº
 class Lmachine
 {
 public:
-	/*
-	Êı¾İ³ÉÔ±
-	*/
-	ofstream Ofile;//¶¨ÒåÊä³öÎÄ¼ş
-	string OutFileName;//Êä³ö½á¹ûµÄÎÄ¼şÃû
-	string CodeFileName;//ĞèÒª´ò¿ªµÄ´úÂëÎÄ¼şÃû
-	CPU Lcpu;//ĞéÄâ»úµÄCPU
-	Status LcpuStatus;//ĞéÄâ»úCPUµÄÔËĞĞ×´Ì¬
-	Bytes Memory[MemSize];//ĞéÄâ»úÄÚ´æ¿Õ¼ä
-	LmachineError LError;//ĞéÄâ»úÀàĞÍ
-	LmachineEndStatus LendStatus;//ĞéÄâ»ú½áÊøÊ±µÄ×´Ì¬
-	/*
-	³ÉÔ±º¯Êı
-	*/
-	char * String2Char(string str);//string ×ªchar *
-	Lmachine();//Ä¬ÈÏÎŞ²Î¹¹Ôìº¯Êı
-	bool Init();//³õÊ¼»¯£¬ÒÔ¼°¿ªÊ¼»¶Ó­½çÃæ ¼°ÓÃ»§Ñ¡ÏîÊäÈë,³õÊ¼»¯³É¹¦·µ»Øtrue£¬·ñÔò·µ»Øflase
-	string GetMemonic(int i); //·µ»Ø»úÆ÷Ö¸ÁîiµÄÖú¼Ç·û£¬Ò²¾ÍÊÇ»ã±àÖ¸Áî
-	void LmachineRun();//Ö´ĞĞ³ÌĞò
-	void Increment(Bytes &data);//Ö´ĞĞ¼Ó1²Ù×÷
-	void Decrement(Bytes &data);//Ö´ĞĞ¼õ1²Ù×÷
-	void SetFlags(Bytes Register);//¸ù¾İ¼Ä´æÆ÷µÄÖµÉè¶¨±êÖ¾Æ÷
-	void PrintRunError();//Êä³ö³ÌĞòÔËĞĞµÄ´íÎó
-	Bytes Index();//¼ÆËã±äÖ·µØÖ· AX+B
-	Bytes Opcode(string token);//È¡µÃstringÀàĞÍtokenËù¶ÔÓ¦µÄ»úÆ÷Ö¸Áî
-	void LmachineQuit();//ÍË³öĞéÄâ»ú
+	
+	ofstream Ofile;
+	string OutFileName;//è¾“å‡ºæ–‡ä»¶çš„æ–‡ä»¶å
+	string CodeFileName;//éœ€è¦æ‰“å¼€çš„ä»£ç æ–‡ä»¶å
+	CPU Lcpu;//è™šæ‹Ÿæœºçš„CPU
+	Status LcpuStatus;
+	Bytes Memory[MemSize];
+	LmachineError LError;
+	LmachineEndStatus LendStatus;
+
+	char * String2Char(string str);
+	Lmachine();
+	bool Init();
+	string GetMemonic(int num);
+	void LmachineRun();
+	void Increment(Bytes &data);
+	void Decrement(Bytes &data);
+	void SetFlags(Bytes Register);
+	void PrintRunError();
+	Bytes Index();
+	Bytes Opcode(string token);
+	void LmachineQuit();
 };
