@@ -8,12 +8,12 @@ int main()
 {
 	Lmachine *lmachine = new Lmachine;
 	Assembler *assembler = new Assembler;
-	if (lmachine->Init())//¿¿¿¿¿¿
+	if (lmachine->Init())
 	{
 		assembler->Init(lmachine->CodeFileName, lmachine);
 		assembler->Run_Assembler();
 		lmachine->LmachineRun();
 	}
-	else //¿¿¿¿¿
+	else
 		return 0;
 }
