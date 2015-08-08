@@ -31,10 +31,10 @@ void Assembler::Run_Assembler()
 	
 	for (size_t i = 0; i < LmachineToken.size(); i++)
 	{
-		type = Lexer(LmachineToken[i], Strtoken);
+		type = Lexer(LmachineToken[i], Strtoken); //获取类型
 		switch (type)
 		{
-		case ASMCode://����ָ��
+		case ASMCode:
 			Op = lmachine->Opcode(Strtoken); 
 			if (Op == OpError) 
 			{
@@ -43,7 +43,7 @@ void Assembler::Run_Assembler()
 			lmachine->Memory[lc] = Op; 
 			lc = (lc + 1) % MemSize;
 			break;
-		case ReferLabel://�Ե�ַ���ŵ�����
+		case ReferLabel:
 			Strtoken += ":";
 			labelindex = SearchSymbol(Strtoken, 1); 
 			if (labelindex == -1)

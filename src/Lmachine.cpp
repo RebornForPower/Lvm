@@ -18,12 +18,12 @@ Lmachine::Lmachine()
 {
 
 }
-//
+//虚拟机初始化
 bool Lmachine::Init()
 {
 	char  Judge;
 	/*
-	
+		欢迎界面
 	*/
 	cout << "--------------------------------------" << endl;
 	cout << "|         welcome to Lmachine        |" << endl;

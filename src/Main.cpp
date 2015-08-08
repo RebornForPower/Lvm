@@ -8,7 +8,7 @@ int main()
 {
 	Lmachine *lmachine = new Lmachine;
 	Assembler *assembler = new Assembler;
-	if (lmachine->Init())
+	if (lmachine->Init())//虚拟机初始化
 	{
 		assembler->Init(lmachine->CodeFileName, lmachine);
 		assembler->Run_Assembler();

@@ -4,7 +4,7 @@ start:	OpCLEARAX 	;AX=0
 add:	OpADDB 10	;AX=AX+[10]
 	OpSTOREAXB 10	;[10]=AX
 	OpINCAX		;AX=AX+1
-	OpCMPVB 11	;AX与11比较
-	OpJNC quit	;Carry=0,跳转到quit
-	OpJC add	;Carry=1,跳转到add
-quit:	HALT		;CPU暂停，并退出
+	OpCMPVB 11	;
+	OpJNC quit	;
+	OpJC add	;
+quit:	HALT	;
