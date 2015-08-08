@@ -4,17 +4,16 @@
 
 using namespace std;
 
-//Ö÷º¯Êý
 int main()
 {
 	Lmachine *lmachine = new Lmachine;
 	Assembler *assembler = new Assembler;
-	if (lmachine->Init())//ÅÐ¶ÏÐéÄâ»ú³õÊ¼»¯ÊÇ·ñ³É¹¦
+	if (lmachine->Init())//¿¿¿¿¿¿
 	{
 		assembler->Init(lmachine->CodeFileName, lmachine);
 		assembler->Run_Assembler();
 		lmachine->LmachineRun();
 	}
-	else //³õÊ¼»¯²»³É¹¦
+	else //¿¿¿¿¿
 		return 0;
 }

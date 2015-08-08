@@ -3,28 +3,21 @@
 #include "Global.h"
 using namespace std;
 class Lmachine;
-//»ã±àÆ÷
+//¿¿¿
 class Assembler
 {
 public:
-	/*
-	Êı¾İ³ÉÔ±
-	*/
 	Lmachine * lmachine;
-	string CodeName;//´úÂëÎÄ¼şÃû×Ö
-	size_t TokenIndex;//token¼ÇºÅË÷Òı
-	vector<Token> LmachineToken; //»ã±à´úÂë×Ö·ûÁ÷
-	vector<Symbol> SymbolTable;//·ûºÅ±í¶¯Ì¬Êı×é
-	/*
-	³ÉÔ±º¯Êı
-	*/
+	string CodeName;
+	size_t TokenIndex;
+	vector<Token> LmachineToken;
+	vector<Symbol> SymbolTable;
 	Assembler();
 	~Assembler();
-	void Init(string codefilename, Lmachine * &lmachine);//³õÊ¼»¯
-	TokenType Lexer(Token token, string &Strtoken);//»ã±à´úÂë×Ö·ûÁ÷·ÖÎö
-	void ReadLine();//½«FILEÀàĞÍCodeÃû×Ö¶ÁÈ¡µ½LmachineTokenÖĞ
-	void Run_Assembler();	//ÔËĞĞ»ã±àÆ÷
-	void BuildSymbolTable();//¹¹½¨·ûºÅ±í
-	int  SearchSymbol(string symbolname, int sign);//ÔÚ·ûºÅ±íÖĞ²éÕÒ·ûºÅ
-	Bytes SearchCmd(Token token);//²éÑ¯»ã±àÖ¸Áî±í£¬·µ»Ø¶ÔÓ¦µÄ»úÆ÷Ö¸Áî£¬»úÆ÷Ö¸ÁîÒşº¬ÎªÖ¸ÁîÊı×éµÄÏÂ±ê
+	void Init(string codefilename, Lmachine * &lmachine);
+	TokenType Lexer(Token token, string &Strtoken);
+	void ReadLine();
+	void Run_Assembler();	
+	void BuildSymbolTable();
+	int  SearchSymbol(string symbolname, int sign);
 };

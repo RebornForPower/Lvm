@@ -4,57 +4,57 @@
 #include <boost/regex.hpp>
 using namespace std;
 
-static boost::regex Regex("([0-9]+)|([A-Z_a-z]*[A-Z_a-z0-9]+)|(:)|(;.*)"); //ÕýÔò±í´ïÊ½
+static boost::regex Regex("([0-9]+)|([A-Z_a-z]*[A-Z_a-z0-9]+)|(:)|(;.*)"); //æ­£åˆ™è¡¨è¾¾å¼
 static boost::smatch what;
-typedef unsigned char Bytes; //Ò»¸ö×Ö½Ú
-#define MemSize 256 //ÐéÄâ»úÄÚ´æ
-#define MaxInstuction 51 //»ã±àÖ¸ÁîÊýÄ¿
-//Í¬ÃûÒýÓÃ½áµã
+typedef unsigned char Bytes; //ä¸€ä¸ªå­—èŠ‚
+#define MemSize 256 //è™šæ‹Ÿæœºå†…å­˜
+#define MaxInstuction 51 //æ±‡ç¼–æŒ‡ä»¤æ•°ç›®
+//åŒåå¼•ç”¨èŠ‚ç‚¹
 struct SymbolReferenceNode
 {
-	Bytes ReferenceAddr;	   //Í¬ÃûÒýÓÃµÄ·ûºÅµÄÄÚ´æµØÖ·
-	SymbolReferenceNode * Next;//ÏÂÒ»¸öÍ¬ÃûÒýÓÃµÄ½áµã
+	Bytes ReferenceAddr;	   //åŒåå¼•ç”¨çš„ç¬¦å·çš„å†…å­˜åœ°å€
+	SymbolReferenceNode * Next;//ä¸‹ä¸€ä¸ªåŒåå¼•ç”¨çš„èŠ‚ç‚¹
 };
-//·ûºÅ¶¨Òå
+//ç¬¦å·å®šä¹‰
 struct Symbol
 {
-	std::string SymbolName;//·ûºÅÃû×Ö
-	Bytes SymbolAddr;	//·ûºÅÄÚ´æµØÖ·
-	SymbolReferenceNode * First;//¸Ã·ûºÅÊ×´Î³öÏÖ
+	string SymbolName;//ç¬¦å·åå­—
+	Bytes SymbolAddr;	//ç¬¦å·å†…å­˜åœ°å€Â·
+	SymbolReferenceNode * First;//é¦–ä¸ªç¬¦å·
 };
-//CPUÉè¼Æ
+//cpuè®¾è®¡
 struct CPU
 {
-	Bytes Accumulator;//ÀÛ¼ÓÆ÷,¼ò³ÆAX
-	Bytes StackPointer;//¶ÑÕ»Ö¸ÕëSP£¬¼ò³ÆSP
-	Bytes IndexRegister;//±äÖ·¼Ä´æÆ÷£¬¼ò³ÆI
-	Bytes InstructionRegister;//Ö¸Áî¼Ä´æÆ÷£¬¼ò³ÆIR
-	Bytes ProgramCounter;//³ÌÐò¼ÆÊýÆ÷£¬¼ò³ÆPC
-	Bytes BasePointer;//»ùÖ·Ö¸Õë£¬¼ò³ÆBP
-	bool Carry;//½øÎ»±êÖ¾Æ÷£¬¼ò³ÆC
-	bool Zero;//ÔËËã½á¹ûÊÇ·ñÎª0£¬½á¹ûÎª0£¬Z=1
-	bool Sign;//·ûºÅ±êÖ¾£¬½á¹ûÎª¸ºÊ±£¬S=1
+	Bytes Accumulator;
+	Bytes StackPointer;
+	Bytes IndexRegister;
+	Bytes InstructionRegister;
+	Bytes ProgramCounter;
+	Bytes BasePointer;
+	bool Carry;
+	bool Zero;
+	bool Sign;
 };
-//ÐéÄâ»úµÄÔËÐÐ×´Ì¬
+//è™šæ‹Ÿæœºè¿è¡ŒçŠ¶æ€
 enum Status
 {
 	Running,
 	Finished,
 };
-//ÐéÄâ»ú´íÎóÀàÐÍ
+//è™šæ‹Ÿæœºé”™è¯¯ç±»åž‹
 enum LmachineError
 {
 	NoneError,
 	OperandError,
 	DataError,
 };
-//ÐéÄâ»úÔËÐÐ½áÊø×´Ì¬
+//è™šæ‹Ÿæœºè¿è¡Œç»“æŸçŠ¶æ€
 enum LmachineEndStatus
 {
-	Success,//ÔËÐÐ³É¹¦
-	Failed,//ÔËÐÐÊ§°Ü
+	Success,
+	Failed,
 };
-//×Ö·ûÁ÷ÀàÐÍ
+//å­—ç¬¦æµç±»åž‹
 enum TokenType
 {
 	ASMCode,
@@ -64,132 +64,124 @@ enum TokenType
 	ID,
 	UnKnown
 };
-//ÐéÄâ»ú»úÆ÷Ö¸Áî±í
+//è™šæ‹ŸæœºæŒ‡ä»¤è¡¨
 enum Operand
 {
 	/*
-	!!!!×¢Òâ£ºB ´ú±íÁ¢¼´Êý£¬Ç°Ãæ¼ÓV ´ú±íÁ¢¼´Êý±¾Éí  ²»¼ÓV´ú±í[B] ¼´BµØÖ·µ¥ÔªÖÐµÄÄÚÈÝ
+         * Bä»£è¡¨ç«‹å³æ•°
+         * å‰é¢å¸¦Vè¡¨ç¤ºç«‹å³æ•°æœ¬èº«
+         * ä¸åŠ Vä»£è¡¨[B],å³Båœ°å€å•å…ƒä¸­çš„å†…å®¹
 	*/
-	OpHALT,	//CPUÔÝÍ£Ö¸Áî ¸ñÊ½£ºHALT
-	OpCLEARAX,		//ÀÛ¼ÓÆ÷Çå0
-	OpClEARC,	//½øÎ»±êÖ¾Æ÷Çå0
-	OpCLEARI,//±äÖ·¼Ä´æÆ÷Çå0
-	OpINAXD,	//½«10½øÖÆÊýÐ´ÈëÀÛ¼ÓÆ÷
-	OpINAXB,	//½«2½øÖÆÊýÐ´ÈëÀÛ¼ÓÆ÷
-	OpINAXA,	//½«ascii×Ö·ûÐ´ÈëÀÛ¼ÓÆ÷
-	OpOUTAXD,	//½«ÀÛ¼ÓÆ÷Êý¾ÝÒÔ10½øÖÆÐÎÊ½Êä³ö
-	OpOUTAXB,	//½«ÀÛ¼ÓÆ÷Êý¾ÝÒÔ2½øÖÆÐÎÊ½Êä³ö
-	OpOUTAXA,	//½«ÀÛ¼ÓÆ÷Êý¾ÝÒÔascii×Ö·ûÐÎÊ½Êä³ö
-	OpINCAX,//ÀÛ¼ÓÆ÷¼Ó1£¬Ó°Ïì±êÖ¾Æ÷
-	OpDECAX,//ÀÛ¼ÓÆ÷¼õ1£¬Ó°Ïì±êÖ¾Æ÷
-	OpINCI,//±äÖ·¼Ä´æÆ÷¼Ó1£¬Ó°Ïì±êÖ¾Æ÷
-	OpDECI,//±äÖ·¼Ä´æÆ÷¼õ1£¬Ó°Ïì±êÖ¾Æ÷
-	OpAXTOI,//ÀÛ¼ÓÆ÷ÄÚÈÝËÍÈë±äÖ·¼Ä´æÆ÷ x
-	OpPUSH,//Ñ¹Õ»£¬¶ÑÕ»Ö¸Õë¼õ1£¬ÀÛ¼ÓÆ÷µÄÄÚÈÝÑ¹ÈëÕ»¶¥¡£
-	OpPOP,//³öÕ»£¬¶ÑÕ»Ö¸Õë¼Ó1£¬½«Õ»¶¥ÄÚÈÝÑ¹ÈëÕ»ÄÚ
-	OpLOADBAX,//¸ñÊ½ LDA B £¬½«BµØÖ·µ¥ÔªÖÐµÄÄÚÈÝËÍÈëÀÛ¼ÓÆ÷ÖÐ£¬ÒÔµ±Ç°PCËùÖ¸ÄÚ´æµÄÊýÖµ×÷ÎªµØÖ·Æ«ÒÆ
-	OpLOADIBAX,//½«±äÖ·¼Ä´æÆ÷+Á¢¼´ÊýBËùÖ¸µÄÄÚ´æµ¥ÔªµÄÄÚÈÝËÍÈëÀÛ¼ÓÆ÷ A=[I+B]
-	OpLOADVBAX,//½«Á¢¼´ÊýBËÍÈëÀÛ¼ÓÆ÷
-	OpLOADVBSP,//½«Á¢¼´ÊýBÖÐµÄÄÚÈÝËÍµ½SP¼Ä´æÆ÷
-	OpSTOREAXB,//[B]=A
-	OpSIOREAXBI,//[B+I]=A
-	//¼Ó·¨
+	OpHALT,	//CPUæš‚åœæŒ‡ä»¤
+	OpCLEARAX,		//AXæ¸…é›¶
+	OpClEARC,	//è¿›ä½æ ‡å¿—å™¨æ¸…é›¶
+	OpCLEARI,//å˜å€å¯„å­˜å™¨æ¸…é›¶
+	OpINAXD,	
+	OpINAXB,	
+	OpINAXA,	
+	OpOUTAXD,	
+	OpOUTAXB,	
+	OpOUTAXA,	
+	OpINCAX,
+	OpDECAX,
+	OpINCI,
+	OpDECI,
+	OpAXTOI,
+	OpPUSH,
+	OpPOP,
+	OpLOADBAX,
+	OpLOADIBAX,
+	OpLOADVBAX,
+	OpLOADVBSP,
+	OpSTOREAXB,
+	OpSIOREAXBI,
 	OpADDB,//A=A+[B]
 	OpADDIB,//A=A+[I+B]
 	OpADDVB,//A=A+B
 	OpADCB,//A=A+C+[B]
 	OpADCIB,//A=A+C+[I+B]
 	OpADCVB,//A=A+C+B
-	//¼õ·¨
+	
 	OpSUBB,//A=A-[B]
 	OpSUBIB,//A=A-[I+B]
 	OpSUBVB,//A=A-B
 	OpSBCB,//A=A-C-[B]
 	OpSBCIB,//A=A-C-[I+B]
 	OpSBCVB,//A=A-C-B
-	//±È½Ï
-	OpCMPB,//AÓë[B]ÄÚÈÝ½øÐÐ±È½Ï£¬Ó°Ïì±êÖ¾Î»
-	OpCMPIB,//AÓë[B+I]ÄÚÈÝ½øÐÐ±È½Ï£¬Ó°Ïì±êÖ¾Î»
-	OpCMPVB,//AÓëB±È½Ï£¬Ó°Ïì±êÖ¾Î»
-	//Óë
-	OpANDB,//AÓë[B]µÄÄÚÈÝÎ»Óë£¬Ó°Ïì±êÖ¾Î»
-	OpANDVB,//AÓëBÎ»Óë£¬Ó°Ïì±êÖ¾Î»
-	OpANDIB,//AÓë[I+B]Î»Óë£¬Ó°Ïì±êÖ¾Î»
-	//»ò
-	OpORB,//AÓë[B]µÄÄÚÈÝÎ»»ò£¬Ó°Ïì±êÖ¾Î»
-	OpORVB,//AÓëBÎ»»ò£¬Ó°Ïì±êÖ¾Î»
-	OpORIB,//AÓë[I+B]Î»»ò£¬Ó°Ïì±êÖ¾Î»
-	//Ìø×ª
-	OpJMPB,//Ìø×ªµ½BµØÖ·
-	OpJZB,//Èç¹ûZ±êÖ¾Îª1£¬Ìø×ªµ½Bµ¥Ôª
-	OpJNZB,//Èç¹ûZ±êÖ¾Îª0£¬Ìø×ªµ½Bµ¥Ôª
-	OpJSB,//Èç¹ûS±êÖ¾Îª1£¬Ìø×ªµ½Bµ¥Ôª
-	OpJNSB,//Èç¹ûS±êÖ¾Îª0£¬Ìø×ªµ½Bµ¥Ôª
-	OpJC,//Èç¹ûC±êÖ¾Îª1£¬Ìø×ªµ½Bµ¥Ôª
-	OpJNC,//Èç¹ûC±êÖ¾Îª0£¬Ìø×ªµ½Bµ¥Ôª
-	//´íÎóÖ¸Áî
+	
+	OpCMPB,
+	OpCMPIB,
+	OpCMPVB,
+	
+	OpANDB,
+	OpANDVB,
+	OpANDIB,
+	
+	OpORB,
+	OpORVB,
+	OpORIB,
+	
+	OpJMPB,
+	OpJZB,
+	OpJNZB,
+	OpJSB,
+	OpJNSB,
+	OpJC,
+	OpJNC,
+	
 	OpError,
 };
-//Ö¸ÁîÖú¼Ç·û
 static string OpMemonic[52] =
 {
-	"HALT",	//CPUÔÝÍ£Ö¸Áî ¸ñÊ½£ºHALT
-	"CLEARAX",		//ÀÛ¼ÓÆ÷Çå0
-	"ClEARC",	//½øÎ»±êÖ¾Æ÷Çå0
-	"CLEARI",//±äÖ·¼Ä´æÆ÷Çå0
-	"INAXD",	//½«10½øÖÆÊýÐ´ÈëÀÛ¼ÓÆ÷
-	"INAXB",	//½«2½øÖÆÊýÐ´ÈëÀÛ¼ÓÆ÷
-	"INAXA",	//½«ascii×Ö·ûÐ´ÈëÀÛ¼ÓÆ÷
-	"OUTAXD",	//½«ÀÛ¼ÓÆ÷Êý¾ÝÒÔ10½øÖÆÐÎÊ½Êä³ö
-	"OUTAXB",	//½«ÀÛ¼ÓÆ÷Êý¾ÝÒÔ2½øÖÆÐÎÊ½Êä³ö
-	"OUTAXA",	//½«ÀÛ¼ÓÆ÷Êý¾ÝÒÔascii×Ö·ûÐÎÊ½Êä³ö
-	"INCAX",//ÀÛ¼ÓÆ÷¼Ó1£¬Ó°Ïì±êÖ¾Æ÷
-	"DECAX",//ÀÛ¼ÓÆ÷¼õ1£¬Ó°Ïì±êÖ¾Æ÷
-	"INCI",//±äÖ·¼Ä´æÆ÷¼Ó1£¬Ó°Ïì±êÖ¾Æ÷
-	"DECI",//±äÖ·¼Ä´æÆ÷¼õ1£¬Ó°Ïì±êÖ¾Æ÷
-	"AXTOI",//ÀÛ¼ÓÆ÷ÄÚÈÝËÍÈë±äÖ·¼Ä´æÆ÷ x
-	"PUSH",//Ñ¹Õ»£¬¶ÑÕ»Ö¸Õë¼õ1£¬ÀÛ¼ÓÆ÷µÄÄÚÈÝÑ¹ÈëÕ»¶¥¡£
-	"POP",//³öÕ»£¬¶ÑÕ»Ö¸Õë¼Ó1£¬½«Õ»¶¥ÄÚÈÝÑ¹ÈëÕ»ÄÚ
-	"LOADBAX",//¸ñÊ½ LDA B £¬½«BµØÖ·µ¥ÔªÖÐµÄÄÚÈÝËÍÈëÀÛ¼ÓÆ÷ÖÐ£¬ÒÔµ±Ç°PCËùÖ¸ÄÚ´æµÄÊýÖµ×÷ÎªµØÖ·Æ«ÒÆ
-	"LOADIBAX",//½«±äÖ·¼Ä´æÆ÷+Á¢¼´ÊýBËùÖ¸µÄÄÚ´æµ¥ÔªµÄÄÚÈÝËÍÈëÀÛ¼ÓÆ÷ A=[I+B]
-	"LOADVBAX",//½«Á¢¼´ÊýBËÍÈëÀÛ¼ÓÆ÷
-	"LOADVBSP",//½«Á¢¼´ÊýBÖÐµÄÄÚÈÝËÍµ½SP¼Ä´æÆ÷
-	"STOREAXB",//[B]=A
-	"SIOREAXBI",//[B+I]=A
-	//¼Ó·¨
+	"HALT",	
+	"CLEARAX",
+	"ClEARC",
+	"CLEARI",
+	"INAXD",
+	"INAXB",
+	"INAXA",
+	"OUTAXD",
+	"OUTAXB",
+	"OUTAXA",
+	"INCAX",
+	"DECAX",
+	"INCI",
+	"DECI",
+	"AXTOI",
+	"PUSH",
+	"POP",
+	"LOADIBAX",
+	"LOADVBAX",
+	"LOADVBSP",
+	"STOREAXB",
+	"SIOREAXBI",
 	"ADDB",//A=A+[B]
 	"ADDIB",//A=A+[I+B]
 	"ADDVB",//A=A+B
 	"ADCB",//A=A+C+[B]
 	"ADCIB",//A=A+C+[I+B]
 	"ADCVB",//A=A+C+B
-	//¼õ·¨
 	"SUBB",//A=A-[B]
 	"SUBIB",//A=A-[I+B]
 	"SUBVB",//A=A-B
 	"SBCB",//A=A-C-[B]
 	"SBCIB",//A=A-C-[I+B]
 	"SBCVB",//A=A-C-B
-	//±È½Ï
-	"CMPB",//AÓë[B]ÄÚÈÝ½øÐÐ±È½Ï£¬Ó°Ïì±êÖ¾Î»
-	"CMPIB",//AÓë[B+I]ÄÚÈÝ½øÐÐ±È½Ï£¬Ó°Ïì±êÖ¾Î»
-	"CMPVP",//AÓëB±È½Ï£¬Ó°Ïì±êÖ¾Î»
-	//Óë
-	"ANDB",//AÓë[B]µÄÄÚÈÝÎ»Óë£¬Ó°Ïì±êÖ¾Î»
-	"ANDVB",//AÓëBÎ»Óë£¬Ó°Ïì±êÖ¾Î»
-	"ANDIB",//AÓë[I+B]Î»Óë£¬Ó°Ïì±êÖ¾Î»
-	//»ò
-	"ORB",//AÓë[B]µÄÄÚÈÝÎ»»ò£¬Ó°Ïì±êÖ¾Î»
-	"ORVB",//AÓëBÎ»»ò£¬Ó°Ïì±êÖ¾Î»
-	"ORIB",//AÓë[I+B]Î»»ò£¬Ó°Ïì±êÖ¾Î»
-	//Ìø×ª
-	"JMPB",//Ìø×ªµ½BµØÖ·
-	"JZB",//Èç¹ûZ±êÖ¾Îª1£¬Ìø×ªµ½Bµ¥Ôª
-	"JNZB",//Èç¹ûZ±êÖ¾Îª0£¬Ìø×ªµ½Bµ¥Ôª
-	"JSB",//Èç¹ûS±êÖ¾Îª1£¬Ìø×ªµ½Bµ¥Ôª
-	"JNSB",//Èç¹ûS±êÖ¾Îª0£¬Ìø×ªµ½Bµ¥Ôª
-	"JC",//Èç¹ûC±êÖ¾Îª1£¬Ìø×ªµ½Bµ¥Ôª
-	"JNC",//Èç¹ûC±êÖ¾Îª0£¬Ìø×ªµ½Bµ¥Ôª
-	//´íÎóÖ¸Áî
+	"CMPB",
+	"CMPIB",
+	"CMPVP",
+	"ANDB",
+	"ANDVB",
+	"ANDIB",
+	"ORB",
+	"ORVB",
+	"ORIB",
+	"JMPB",
+	"JZB",
+	"JNZB",
+	"JSB",
+	"JNSB",
+	"JC",
+	"JNC",
 	"OpError",
 };
