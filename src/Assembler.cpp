@@ -187,7 +187,7 @@ void Assembler::BuildSymbolTable()
 				SymbolReferenceNode *newnode = new SymbolReferenceNode;
 				newnode->ReferenceAddr = type - 1;
 				newnode->Next = NULL;
-				if (SymbolTable[labelindex].First = NULL)
+				if (SymbolTable[labelindex].First== NULL)
 					SymbolTable[labelindex].First = newnode;
 				else
 				{

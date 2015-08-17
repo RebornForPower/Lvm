@@ -20,4 +20,5 @@ public:
 	void Run_Assembler();	
 	void BuildSymbolTable();
 	int  SearchSymbol(string symbolname, int sign);
+        Bytes SearchCmd(Token token);
 };
