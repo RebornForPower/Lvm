@@ -17,13 +17,8 @@ using namespace std;
 
 typedef unsigned char byte;//byte
 #define memsize 1024 //1024 byte
-vector<string> codestream; //code token stream
 
-//string to char *
-char * string2char(string str)
-{
-    return const_cast<char *>(str.c_str());
-}
+
 //cpu
 struct cpu
 {

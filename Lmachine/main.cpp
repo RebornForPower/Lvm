@@ -15,6 +15,6 @@ using namespace std;
 int main() {
     Lmachine lvm;
     lvm.init(); //init lmachine
+    lvm.readline();
     Tokenparse token;
-    token.readline();
 }

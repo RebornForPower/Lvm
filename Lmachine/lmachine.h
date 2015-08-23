@@ -26,10 +26,11 @@ public:
     bool init();
     void lvmrun();
     void readline();
-    
+    char * string2char(string str);
     //data
     static string infile;
     static string outfile;
+    vector<string> codestream;
     
 };
 #endif /* defined(__Lvm__lmachine__) */
