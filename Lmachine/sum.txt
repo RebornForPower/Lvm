@@ -1,0 +1,10 @@
+start:	OpCLEARAX 	#AX=0
+        OpSTOREAXB 10   #[10]=AX
+        OpLOADVBAX 1    #AX=1
+add:	OpADDB 10	#AX=AX+[10]
+        OpSTOREAXB 10	#[10]=AX
+    OpINCAX		#AX=AX+1
+    OpCMPVB 11	#
+    OpJNC quit	#
+    OpJC add	#
+quit:	HALT	#

@@ -8,9 +8,10 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdio>
 #include "lmachine.h"
 using namespace std;
-
+#define file "sum.txt"
 Lmachine::Lmachine()
 {
     
@@ -21,18 +22,24 @@ string Lmachine::outfile="";
 
 bool Lmachine::init()
 {
-    cout<<" input file :";
-    cin>>infile;
-    fstream search;
-    search.open(string2char(infile));
-    if(!search)
-        cout<<"file "<<infile<<" not find "<<endl;
-    while (!search) {
+    cout<<" input file path and name:";
+    cin>>infile;;
+    ofstream searchinfile;
+    searchinfile.open(string2char(Lmachine::infile));
+    if(!searchinfile)
+        cout<<" file "<<infile<<" not find "<<endl;
+    while (!searchinfile) {
         cin>>infile;
-        search.open(string2char(infile));
+        searchinfile.open(string2char(infile));
     }
-    cout<<" output file :";
+    cout<<" output file path and name:";
     cin>>outfile;
+    ofstream newfilepath;
+    newfilepath.open(string2char(outfile),ios::out);
+    if(newfilepath)
+    {
+        cout<<" file "<<Lmachine::outfile<<" is create success"<<endl;
+    }
     return true;
 }
 
@@ -44,9 +51,8 @@ char * Lmachine::string2char(string str)
 void Lmachine::readline()
 {
     int index,length;
-    ifstream code;
+    ifstream code("/Users/Leviathan/Code/Lmachine/Lmachine/sum.txt");
     string line;
-    code.open(string2char(Lmachine::infile));
     while(getline(code,line))
     {
         length=line.length();
@@ -60,6 +66,7 @@ void Lmachine::readline()
                 while (line[index]>='0'&&line[index]<'9')
                 {
                     token+=line[index];
+                    index++;
                 }
                 codestream.push_back(token);
             }
@@ -68,16 +75,18 @@ void Lmachine::readline()
                 {
                     string token="";
                     token+=line[index];
+                    index++;
                     while ((line[index]>='a'&&line[index]<'z')||(line[index]>='A'&&line[index]<='Z')||(line[index]>='0'&&line[index]<'9')) {
                         token+=line[index];
+                        index++;
                     }
-                
+                    codestream.push_back(token);
                 }
             //comments
             else if (line[index]=='#')
             {
                 index++;
-                while (line[index]!='\n') {
+                while (index<length) {
                     index++;
                 }
             }
@@ -86,7 +95,12 @@ void Lmachine::readline()
             {
                 string token="";
                 token=line[index];
+                codestream.push_back(token);
+                index++;
             }
+            //space
+            else
+                index++;
         }
     }
 }

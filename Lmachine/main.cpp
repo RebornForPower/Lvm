@@ -9,12 +9,10 @@
 #include <iostream>
 #include "assembler.h"
 #include "lmachine.h"
-#include "token.h"
 using namespace std;
 
 int main() {
     Lmachine lvm;
     lvm.init(); //init lmachine
-    lvm.readline();
-    Tokenparse token;
+    lvm.readline();//get code
 }
