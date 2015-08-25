@@ -13,6 +13,8 @@ using namespace std;
 
 int main() {
     Lmachine lvm;
-    lvm.init(); //init lmachine
-    lvm.readline();//get code
+    lvm.init();         //init lmachine
+    lvm.readline();     //get code
+    Assembler assembler;
+    assembler.assemblerrun();
 }

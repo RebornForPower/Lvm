@@ -9,6 +9,7 @@
 #pragma once
 #ifndef __Lvm__lmachine__
 #define __Lvm__lmachine__
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -30,7 +31,6 @@ public:
     //data
     static string infile;
     static string outfile;
-    vector<string> codestream;
     
 };
 #endif /* defined(__Lvm__lmachine__) */

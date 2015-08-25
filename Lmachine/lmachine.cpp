@@ -11,7 +11,10 @@
 #include <cstdio>
 #include "lmachine.h"
 using namespace std;
+
 #define file "sum.txt"
+
+
 Lmachine::Lmachine()
 {
     

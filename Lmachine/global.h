@@ -2,8 +2,8 @@
 //  global.h
 //  Lmachine
 //
-//  Created by 孙海清 on 15/8/21.
-//  Copyright (c) 2015年 孙海清. All rights reserved.
+//  Created by leviathan on 15/8/21.
+//  Copyright (c) 2015年 leviathan. All rights reserved.
 //
 
 #pragma once
@@ -17,7 +17,26 @@ using namespace std;
 
 typedef unsigned char byte;//byte
 #define memsize 1024 //1024 byte
+#define opnum 9
+#define regnum 12
 
+extern byte memory[memsize];//vm memory
+extern vector<string> codestream;
+extern string strop[];
+extern string stringregister[];
+//reference symbol
+struct refsymbol
+{
+    int refsymboladdr;
+    refsymbol *next;
+};
+//sylbol
+struct symbol
+{
+    string symbolname;
+    int symboladdr; //symbol address
+    refsymbol * first;
+};
 
 //cpu
 struct cpu
@@ -56,6 +75,33 @@ enum lvmendstatus
 {
     success,
     fail,
+};
+
+enum tokentype
+{
+    op,
+    reg,
+    label,
+    reflabel,
+    number,
+    unknow
+};
+enum op
+{
+    /* 
+        B ->[B]即B地址单元中的内容
+        VB->立即数本身
+    */
+    OpHALT,
+    OpCLEAR,    //clear register
+    OpADDB,
+    OpLOADVB,
+    OpSTOREB, //[B]=register
+    OpINC,     //register=register+1
+    OpCMPVB,    //compare VB
+    OpJG,
+    OpJNG,
+    OpERROR
 };
 
 #endif /* defined(__Lmachine__global__) */
