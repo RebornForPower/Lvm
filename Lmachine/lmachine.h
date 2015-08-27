@@ -30,6 +30,7 @@ public:
     void readline();
     char * string2char(string str);
     int string2int(string str);
+    string int2string(int num);
     int getregindex(MemoryNode reg);
     int getcmdindex(MemoryNode cmd);
     int getint(MemoryNode mem);

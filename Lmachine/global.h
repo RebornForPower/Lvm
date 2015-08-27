@@ -20,6 +20,8 @@ typedef char byte;//byte
 #define keynum 21
 
 extern vector<string> codestream;
+extern byte memory[];
+extern byte data[];
 extern string strkey[];
 extern int Mempointer; //memsize max
 //Memory Node
@@ -67,7 +69,8 @@ enum regop
 {
     add,
     sub,
-    assign,
+    assign,//num=register
+    process,//register=num
     clear
 };
 //virtual machine running status
@@ -123,7 +126,7 @@ enum key
     OpADDB,
     OpLOADVB,
     OpSTOREB, //[B]=register
-    OpINC,     //register=register+1
+    OpINCR,     //register=register+1
     OpCMPVB,    //compare VB
     OpJG,
     OpJNG,

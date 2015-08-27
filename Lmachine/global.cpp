@@ -38,7 +38,7 @@ string strkey[]=
     "OpADDB",
     "OpLOADVB",
     "OpSTOREB",
-    "OpINC",
+    "OpINCR",
     "OpCMPVB",
     "OpJG",
     "OpJNG",

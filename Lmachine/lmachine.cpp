@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstdio>
 #include "lmachine.h"
 using namespace std;
@@ -63,7 +64,15 @@ void Lmachine::regoperand(int regindex, regop op,int num)
                 case clear:
                     lvmcpu.al=0;
                     break;
-                    
+                case assign:
+                    num=lvmcpu.al;
+                    break;
+                case process:
+                    lvmcpu.al=num;
+                    break;
+                case add:
+                    lvmcpu.al=lvmcpu.al+num;
+                    break;
                 default:
                     break;
             }
@@ -81,6 +90,15 @@ int Lmachine::string2int(string str)
 {
     int num=atoi(str.c_str());
     return num;
+}
+
+string Lmachine::int2string(int num)
+{
+    stringstream s;
+    string str;
+    s<<num;
+    s>>str;
+    return str;
 }
 bool Lmachine::init()
 {
@@ -201,11 +219,57 @@ void Lmachine::lvmrun()
                         int regindex=getregindex(reg);
                         regoperand(regindex, clear, 0);
                         }
+                    break;
                 }
                 case OpSTOREB:
                 {
                     lvmcpu.pc++;
                     MemoryNode addr=Memory[lvmcpu.pc];
+                    int address=getint(addr);
+                    lvmcpu.pc++;
+                    MemoryNode reg=Memory[lvmcpu.pc];
+                    int num;
+                    int regindex=getregindex(reg);
+                    regoperand(regindex, assign,num);
+                    string strnum=int2string(num);
+                    for(int index=0;index<strnum.length();index++)
+                    {
+                        data[address]=strnum[index];
+                        address++;
+                    }
+                    break;
+                }
+                case OpLOADVB:
+                {
+                    lvmcpu.pc++;
+                    MemoryNode reg=Memory[lvmcpu.pc];
+                    int regindex=getregindex(reg);
+                    lvmcpu.pc++;
+                    MemoryNode memnum=Memory[lvmcpu.pc];
+                    int num=getint(memnum);
+                    regoperand(regindex, process, num);
+                    break;
+                }
+                case OpADDB:
+                {
+                    lvmcpu.pc++;
+                    MemoryNode reg=Memory[lvmcpu.pc];
+                    int regindex=getregindex(reg);
+                    lvmcpu.pc++;
+                    MemoryNode memnum=Memory[lvmcpu.pc];
+                    int num=getint(memnum);
+                    int addrvalue=data[num]-'0';
+                    regoperand(regindex, add, addrvalue);
+                }
+                case OpINCR:
+                {
+                    lvmcpu.pc++;
+                    MemoryNode reg=Memory[lvmcpu.pc];
+                    int regindex=getregindex(reg);
+                    regoperand(regindex, add, 1);
+                }
+                case OpCMPVB:
+                {
                     
                 }
                 default:
