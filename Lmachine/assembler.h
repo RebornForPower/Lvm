@@ -24,7 +24,9 @@ public:
     void assemblerrun();
     tokentype lexer(string &token,int index);
     void buildsymbol();             //build symbol table
+    string int2string(int num);
     int searchcmd(string token);
-    byte getopcode(string token);
+    int searchreg(string token);
+    int getopcode(string token);
 };
 #endif /* defined(__Lmachine__assembler__) */

@@ -13,22 +13,13 @@
 using namespace std;
 
 vector<string> codestream;
+vector<MemoryNode> Memory;
 byte memory[memsize];
-string strop[]=
+byte data[memsize]; //data segment 
+int Mempointer=0;
+string strkey[]=
 {
-    "OpHALT",
-    "OpCLEAR",
-    "OpADDB",
-    "OpLOADVB",
-    "OpSTOREB",
-    "OpINC",
-    "OpCMPVB",
-    "OpJG",
-    "OpJNG",
-    "OpERROR"
-};
-string stringregister[]=
-{
+    //register
     "AL",
     "BL",
     "CL",
@@ -40,6 +31,17 @@ string stringregister[]=
     "BP",
     "CARRY",
     "ZERO",
-    "SIGN"
+    "SIGN",
+    //operand
+    "OpHALT",
+    "OpCLEAR",
+    "OpADDB",
+    "OpLOADVB",
+    "OpSTOREB",
+    "OpINC",
+    "OpCMPVB",
+    "OpJG",
+    "OpJNG",
+    "OpERROR"
 };
 

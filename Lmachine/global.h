@@ -15,15 +15,22 @@
 #include <vector>
 using namespace std;
 
-typedef unsigned char byte;//byte
+typedef char byte;//byte
 #define memsize 1024 //1024 byte
-#define opnum 9
-#define regnum 12
+#define keynum 21
 
-extern byte memory[memsize];//vm memory
 extern vector<string> codestream;
-extern string strop[];
-extern string stringregister[];
+extern string strkey[];
+extern int Mempointer; //memsize max
+//Memory Node
+struct MemoryNode
+{
+    byte value;
+    MemoryNode *next;
+};
+
+extern vector<MemoryNode> Memory;
+
 //reference symbol
 struct refsymbol
 {
@@ -47,21 +54,27 @@ struct cpu
     byte cl;
     byte dl;
     byte ip;
-    byte ir;
+    int ir;
     byte sp;
-    byte pc;
+    int pc;
     byte bp;
     //flag register
     byte carry;
     byte zero;
     byte sign;
 };
-
+enum regop
+{
+    add,
+    sub,
+    assign,
+    clear
+};
 //virtual machine running status
 enum status
 {
     running,
-    finish,
+    finished
 };
 
 enum lvmerror
@@ -86,8 +99,21 @@ enum tokentype
     number,
     unknow
 };
-enum op
+enum key
 {
+    //register
+    al,
+    bl,
+    cl,
+    dl,
+    ip,
+    ir,
+    sp,
+    pc,
+    bp,
+    carry,
+    zero,
+    sign,
     /* 
         B ->[B]即B地址单元中的内容
         VB->立即数本身

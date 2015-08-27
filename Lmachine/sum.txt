@@ -1,0 +1,10 @@
+start : OpCLEAR AL     #AL=0
+        OpSTOREB 10 AL #[10]=AL
+        OpLOADVB AL 1  #AL=1
+add:    OpADDB AL 10   #AL=AL+[10]
+        OpSTOREB 10 AL #[10]=AL
+        OpINC AL       #AL=AL+1
+        OpCMPVB 11     #CMP 11
+        OpJG    quit
+        OpJNG    add
+quit:   OpHALT

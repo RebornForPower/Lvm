@@ -8,22 +8,37 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include "assembler.h"
 using namespace std;
 
 Assembler::Assembler()
 {
 }
-
+string Assembler::int2string(int num)
+{
+    stringstream s;
+    string str;
+    s<<num;
+    s>>str;
+    return str;
+}
 int Assembler::searchcmd(string token)
 {
-    int i=0;
-    while (i<opnum&&strop[i]!=token) {
+    int i=9;
+    while (i<21&&strkey[i]!=token) {
         i++;
     }
     return i;
 }
 
+int Assembler::searchreg(string token)
+{
+    int i=0;
+    while(i<9&&strkey[i]!=token)
+        i++;
+    return i;
+}
 tokentype Assembler::lexer(string &token,int index)
 {
     tokentype type=unknow;
@@ -33,23 +48,19 @@ tokentype Assembler::lexer(string &token,int index)
         command=searchcmd(token);
         if(index+1<=codestream.size())
         {
-            if(command==opnum&&codestream[index+1]==":")
+            if(command==keynum&&codestream[index+1]==":")
             {
                     type=label;
                     token+=":";
             }
-            else if(command==opnum&&codestream[index]!=":")
+            else if(command==keynum&&codestream[index]!=":")
             {
-                for(int num=0;num<=regnum;num++)
-                {
-                    if (stringregister[num]==token)
-                    {
-                        type=reg;
-                        break;
-                    }
-                    else
-                        type=reflabel;
-                }
+                int index;
+                index=searchreg(token);
+                if (index>9)
+                    type=reflabel;
+                else
+                    type=reg;
             }
             else
             {
@@ -58,15 +69,11 @@ tokentype Assembler::lexer(string &token,int index)
         }
         else
         {
-            for(int num=0;num<=regnum;num++)
-            {
-                if (stringregister[num]==token)
-                {
-                    type=reg;
-                    return type;
-                }
-            }
-            if(command<opnum)
+            int index;
+            index=searchreg(token);
+            if(index<9)
+                type=reg;
+            else if(index<21&&index>9)
                 type=op;
             else
                 type=reflabel;
@@ -164,12 +171,12 @@ void Assembler::buildsymbol()
     }
 }
 
-byte Assembler::getopcode(string token)
+int Assembler::getopcode(string token)
 {
     byte op=OpHALT;
-    while(op<opnum&&token!=strop[op])
+    while(op<21&&token!=strkey[op])
         op++;
-    if(op<opnum)
+    if(op<21)
         return op;
     else
         return OpERROR;
@@ -177,21 +184,57 @@ byte Assembler::getopcode(string token)
 void Assembler::assemblerrun()
 {
     int labelindex=0;
-    byte operand;
-    byte mempointer;
+    int operand;
     buildsymbol();
     for(int index=0;index<codestream.size();index++)
     {
         string token=codestream[index];
         tokentype type=lexer(token,index);
         switch (type) {
+            case label:
+                index++;
+                break;
+            case reg:
+            {
+                int regindex=searchreg(token);
+                string strregindex=int2string(regindex);
+                MemoryNode head;
+                head.value='r';
+                head.next=NULL;
+                MemoryNode *pointer=&head;
+                for (int index=0; index<strregindex.length(); index++) {
+                    MemoryNode *node=new MemoryNode;
+                    node->value=strregindex[index];
+                    node->next=NULL;
+                    pointer->next=node;
+                    pointer=node;
+                }
+                Memory.push_back(head);
+                break;
+            }
             case op:
+            {
                 operand=getopcode(token);
                 if(operand==OpERROR)
                     cout<<" error operand "<<token<<endl;
-                    memory[mempointer]=operand;
-                mempointer++;
+                MemoryNode head;
+                head.value='o';
+                head.next=NULL;
+                int opindex=searchcmd(token);
+                Mempointer++;
+                string key=int2string(opindex);
+                MemoryNode *pointer=&head;
+                for(int index=0;index<key.length();index++)
+                {
+                    MemoryNode *node=new MemoryNode;
+                    node->value=key[index];
+                    node->next=NULL;
+                    pointer->next=node;
+                    pointer=node;
+                }
+                Memory.push_back(head);
                 break;
+            }
             case reflabel:
                 token+=":";
                 labelindex=searchsymbol(token,1);
@@ -200,18 +243,40 @@ void Assembler::assemblerrun()
                 }
                 else
                 {
-                    memory[mempointer]=symboltable[labelindex].symboladdr;
-                    mempointer++;
+                    MemoryNode head;
+                    string addr=int2string(symboltable[labelindex].symboladdr);
+                    head.value=addr[0];
+                    head.next=NULL;
+                    MemoryNode * pointer=&head;
+                    for(int index=1;index<addr.length();index++)
+                    {
+                        MemoryNode *node=new MemoryNode;
+                        node->value=addr[index];
+                        node->next=NULL;
+                        pointer->next=node;
+                        pointer=node;
+                    }
+                    Memory.push_back(head);
                 }
                 break;
             case number:
                 {
-                    int number=atoi(codestream[index].c_str());
-                    memory[mempointer]=number;
-                    break;
+                    MemoryNode head;
+                    head.value=token[0];
+                    head.next=NULL;
+                    MemoryNode *pointer=&head;
+                    for (int index=1; index<token.length(); index++) {
+                        MemoryNode *node=new MemoryNode;
+                        node->value=token[index];
+                        node->next=NULL;
+                        pointer->next=node;
+                        pointer=node;
+                    }
+                    Memory.push_back(head);
                 }
             default:
                 break;
         }
     }
+    cout<<"Assembler is running successfully ...<<"<<endl;
 }

@@ -25,10 +25,18 @@ public:
     //funciton
     Lmachine();
     bool init();
+    void initreg(); // init register
     void lvmrun();
     void readline();
     char * string2char(string str);
+    int string2int(string str);
+    int getregindex(MemoryNode reg);
+    int getcmdindex(MemoryNode cmd);
+    int getint(MemoryNode mem);
+    void regoperand(int regindex,regop op,int num);
     //data
+    cpu lvmcpu;
+    status lvmstatus;
     static string infile;
     static string outfile;
     

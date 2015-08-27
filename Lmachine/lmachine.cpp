@@ -14,15 +14,74 @@ using namespace std;
 
 #define file "sum.txt"
 
-
 Lmachine::Lmachine()
 {
     
+}
+
+int Lmachine::getcmdindex(MemoryNode cmd)
+{
+    string index="";
+    MemoryNode *pointer=cmd.next;
+    while (pointer->next!=NULL) {
+        index+=pointer->value;
+        pointer=pointer->next;
+    }
+    int idx=string2int(index);
+    return idx;
+}
+
+int Lmachine::getregindex(MemoryNode reg)
+{
+    string index="";
+    MemoryNode *pointer=reg.next;
+    while (pointer->next!=NULL) {
+        index+=pointer->value;
+        pointer=pointer->next;
+    }
+    int idx=string2int(index);
+    return idx;
+}
+
+int Lmachine::getint(MemoryNode mem)
+{
+    string num="";
+    MemoryNode *pointer=mem.next;
+    while (pointer->next!=NULL) {
+        num+=pointer->value;
+        pointer=pointer->next;
+    }
+    int number=string2int(num);
+    return number;
+}
+
+void Lmachine::regoperand(int regindex, regop op,int num)
+{
+    switch (regindex) {
+        case al:
+            switch (op) {
+                case clear:
+                    lvmcpu.al=0;
+                    break;
+                    
+                default:
+                    break;
+            }
+            break;
+            
+        default:
+            break;
+    }
 }
 //init static variable
 string Lmachine::infile="";
 string Lmachine::outfile="";
 
+int Lmachine::string2int(string str)
+{
+    int num=atoi(str.c_str());
+    return num;
+}
 bool Lmachine::init()
 {
     cout<<" input file path and name:";
@@ -106,4 +165,53 @@ void Lmachine::readline()
                 index++;
         }
     }
+}
+
+void Lmachine::initreg()
+{
+    lvmcpu.al=0;
+    lvmcpu.bl=0;
+    lvmcpu.cl=0;
+    lvmcpu.dl=0;
+    lvmcpu.bp=0;
+    lvmcpu.ip=0;
+    lvmcpu.sp=0;
+    lvmcpu.pc=0;
+    lvmcpu.bp=0;
+}
+void Lmachine::lvmrun()
+{
+    initreg();// init register
+    lvmstatus=running;
+    do {
+        MemoryNode command=Memory[lvmcpu.pc];
+        if (command.value=='o') {
+            int index=getcmdindex(command);
+            switch (index) {
+                case OpHALT:
+                {
+                    lvmstatus=finished;
+                    break;
+                }
+                case OpCLEAR:
+                {
+                    lvmcpu.pc++;
+                    MemoryNode reg=Memory[lvmcpu.pc];
+                    if (reg.value=='r') {
+                        int regindex=getregindex(reg);
+                        regoperand(regindex, clear, 0);
+                        }
+                }
+                case OpSTOREB:
+                {
+                    lvmcpu.pc++;
+                    MemoryNode addr=Memory[lvmcpu.pc];
+                    
+                }
+                default:
+                    break;
+            }
+        }
+    } while (lvmstatus==running);
+    
 }
