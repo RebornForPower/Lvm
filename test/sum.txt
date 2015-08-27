@@ -1,6 +1,6 @@
 start : OpCLEAR AL     #AL=0
-        OpSTOREB 10 AL #[10]=AL
-        OpLOADVB AL 1  #AL=1
+        OpSTOREB 10 AL #[10]=AL  将寄存器内容加载到内存
+        OpLOADVB AL 1  #AL=1     将值存入寄存器中
 add:    OpADDB AL 10   #AL=AL+[10]
         OpSTOREB 10 AL #[10]=AL
         OpINC AL       #AL=AL+1
