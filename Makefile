@@ -1,5 +1,5 @@
 lvm:main.o lmachine.o assembler.o global.o
-		g++ -g  main.o lmachine.o assembler.o global.o
+		g++ -g  main.o lmachine.o assembler.o global.o -o lvm
 main.o:lvm/main.cpp lvm/lmachine.h lvm/assembler.h
 		g++ -g -c lvm/main.cpp
 lmachine.o:lvm/lmachine.cpp lvm/lmachine.h
