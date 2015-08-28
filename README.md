@@ -2,14 +2,15 @@
 
        --- a simple virtual machine 
 
-<h2>Building and Running :</h2>
+##Building and Running :
 
-<h4>Linux,*nix,Mac OSX:<h4>
+###Linux,*nix,Mac OSX:
 
        $ git clone https://github.com/Leviathan1995/lvm.git
        $ make
        $ ./lvm
-       
+##Support Instruction:
+
 | Instruction  | Explanation            |   Example        |
 | ------------ | ---------------------- | -------------    |
 |   OpHALT     |     虚拟机停止         |                  |
