@@ -6,7 +6,7 @@ add:    OpLOAD AL CL   #AL=CL
         OpADDB AL 10   #AL=AL+[10]
         OpSTOREB 10 AL #[10]=AL  将寄存器内容加载到内存
         OpINC CL       #CL=CL+1
-        OpCMPVB CL 4   #CMP 5
+        OpCMPVB CL 4   #CMP 4
         OpJG    quit
         OpJNG    add
 quit:   OpPRINTR AL

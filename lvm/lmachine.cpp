@@ -109,13 +109,13 @@ void Lmachine::regoperand(int regindex, regop op,int &num)
                 case cmp:
                     if(lvmcpu.cl-'0'<num)
                     {
-                        lvmcpu.sign=1;
-                        lvmcpu.of=0;
+                        lvmcpu.sign=1+'0';
+                        lvmcpu.of=0+'0';
                     }
                     else
                     {
-                        lvmcpu.sign=0;
-                        lvmcpu.of=0;
+                        lvmcpu.sign=0+'0';
+                        lvmcpu.of=0+'0';
                     }
                     break;
                 default:
@@ -146,23 +146,23 @@ string Lmachine::int2string(int num)
 }
 bool Lmachine::init()
 {
-    cout<<" input file path and name:";
+    cout<<"input file path and name:";
     cin>>infile;;
     ofstream searchinfile;
     searchinfile.open(string2char(Lmachine::infile));
     if(!searchinfile)
-        cout<<" file "<<infile<<" not find "<<endl;
+        cout<<"file "<<infile<<" not find "<<endl;
     while (!searchinfile) {
         cin>>infile;
         searchinfile.open(string2char(infile));
     }
-    cout<<" output file path and name:";
+    cout<<"output file path and name:";
     cin>>outfile;
     ofstream newfilepath;
     newfilepath.open(string2char(outfile),ios::out);
     if(newfilepath)
     {
-        cout<<" file "<<Lmachine::outfile<<" is create success"<<endl;
+        cout<<"file "<<Lmachine::outfile<<" is create success"<<endl;
     }
     return true;
 }
@@ -251,8 +251,9 @@ void Lmachine::initreg()
 void Lmachine::lvmrun(Assembler & assembler)
 {
     initreg();// init register
-    
+    initdata();
     lvmstatus=running;
+    cout<<"Lmachine  is running successfully ..."<<endl;
     do {
         lvmcpu.pc++;
         MemoryNode command=Memory[lvmcpu.pc];
@@ -352,7 +353,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                 }
                 case OpJG:
                 {
-                    if(lvmcpu.sign==0&&lvmcpu.of==0)
+                    if(lvmcpu.sign==0+'0'&&lvmcpu.of==0+'0')
                     {
                         lvmcpu.pc++;
                         MemoryNode addr=Memory[lvmcpu.pc];
@@ -363,7 +364,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                 }
                 case OpJNG:
                 {
-                    if (lvmcpu.sign==1&&lvmcpu.of==0)
+                    if (lvmcpu.sign==1+'0'&&lvmcpu.of==0+'0')
                     {
                         lvmcpu.pc++;
                         MemoryNode addr=Memory[lvmcpu.pc];
@@ -386,5 +387,4 @@ void Lmachine::lvmrun(Assembler & assembler)
             }
         }
     } while (lvmstatus==running);
-    
 }

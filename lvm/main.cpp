@@ -18,4 +18,6 @@ int main() {
     Assembler assembler;
     assembler.assemblerrun();
     lvm.lvmrun(assembler);
+    cout<<"lvm is over ..."<<endl;
+    return 0;
 }
