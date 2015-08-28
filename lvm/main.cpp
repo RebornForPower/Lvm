@@ -17,4 +17,5 @@ int main() {
     lvm.readline();     //get code
     Assembler assembler;
     assembler.assemblerrun();
+    lvm.lvmrun(assembler);
 }

@@ -17,7 +17,7 @@ using namespace std;
 
 typedef char byte;//byte
 #define memsize 1024 //1024 byte
-#define keynum 21
+#define keynum 23
 
 extern vector<string> codestream;
 extern byte memory[];
@@ -58,6 +58,7 @@ struct cpu
     byte ip;
     int ir;
     byte sp;
+    byte of;
     int pc;
     byte bp;
     //flag register
@@ -71,6 +72,7 @@ enum regop
     sub,
     assign,//num=register
     process,//register=num
+    cmp,
     clear
 };
 //virtual machine running status
@@ -124,12 +126,14 @@ enum key
     OpHALT,
     OpCLEAR,    //clear register
     OpADDB,
+    OpLOAD,
     OpLOADVB,
     OpSTOREB, //[B]=register
-    OpINCR,     //register=register+1
-    OpCMPVB,    //compare VB
+    OpINC,     //register=register+1
+    OpCMPVB,    //compare register B
     OpJG,
     OpJNG,
+    OpPRINTR,
     OpERROR
 };
 

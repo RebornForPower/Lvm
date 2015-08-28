@@ -15,7 +15,8 @@ using namespace std;
 vector<string> codestream;
 vector<MemoryNode> Memory;
 byte memory[memsize];
-byte data[memsize]; //data segment 
+byte data[memsize]; //data segment
+
 int Mempointer=0;
 string strkey[]=
 {
@@ -36,12 +37,14 @@ string strkey[]=
     "OpHALT",
     "OpCLEAR",
     "OpADDB",
+    "OpLOAD",
     "OpLOADVB",
     "OpSTOREB",
-    "OpINCR",
+    "OpINC",
     "OpCMPVB",
     "OpJG",
     "OpJNG",
+    "OpPRINTR",
     "OpERROR"
 };
 

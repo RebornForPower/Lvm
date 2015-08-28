@@ -26,7 +26,7 @@ string Assembler::int2string(int num)
 int Assembler::searchcmd(string token)
 {
     int i=9;
-    while (i<21&&strkey[i]!=token) {
+    while (i<keynum&&strkey[i]!=token) {
         i++;
     }
     return i;
@@ -37,7 +37,7 @@ int Assembler::searchreg(string token)
     int i=0;
     while(i<9&&strkey[i]!=token)
         i++;
-    return i;
+    return i+1;
 }
 tokentype Assembler::lexer(string &token,int index)
 {
@@ -73,7 +73,7 @@ tokentype Assembler::lexer(string &token,int index)
             index=searchreg(token);
             if(index<9)
                 type=reg;
-            else if(index<21&&index>9)
+            else if(index<keynum&&index>9)
                 type=op;
             else
                 type=reflabel;
@@ -127,7 +127,7 @@ void Assembler::buildsymbol()
                 {
                     symbol sym;
                     sym.symbolname=codestream[index];
-                    sym.symboladdr=index;
+                    sym.symboladdr=int(index-symboltable.size()*2);
                     sym.first=NULL;
                     symboltable.push_back(sym);
                 }
@@ -174,9 +174,9 @@ void Assembler::buildsymbol()
 int Assembler::getopcode(string token)
 {
     byte op=OpHALT;
-    while(op<21&&token!=strkey[op])
+    while(op<keynum&&token!=strkey[op])
         op++;
-    if(op<21)
+    if(op<keynum)
         return op;
     else
         return OpERROR;
@@ -236,7 +236,6 @@ void Assembler::assemblerrun()
                 break;
             }
             case reflabel:
-                token+=":";
                 labelindex=searchsymbol(token,1);
                 if (labelindex==-1) {
                     cout<<" no such  a label"<<endl;
@@ -278,5 +277,5 @@ void Assembler::assemblerrun()
                 break;
         }
     }
-    cout<<"Assembler is running successfully ...<<"<<endl;
+    cout<<"Assembler is running successfully ..."<<endl;
 }

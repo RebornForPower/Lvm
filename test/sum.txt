@@ -1,10 +1,13 @@
 start : OpCLEAR AL     #AL=0
-        OpSTOREB 10 AL #[10]=AL  将寄存器内容加载到内存
+        OpCLEAR CL     #CL=0
+        OpLOADVB CL 1  #CL=1
         OpLOADVB AL 1  #AL=1     将值存入寄存器中
-add:    OpADDB AL 10   #AL=AL+[10]
-        OpSTOREB 10 AL #[10]=AL
-        OpINC AL       #AL=AL+1
-        OpCMPVB 11     #CMP 11
+add:    OpLOAD AL CL   #AL=CL
+        OpADDB AL 10   #AL=AL+[10]
+        OpSTOREB 10 AL #[10]=AL  将寄存器内容加载到内存
+        OpINC CL       #CL=CL+1
+        OpCMPVB CL 4   #CMP 5
         OpJG    quit
         OpJNG    add
-quit:   OpHALT
+quit:   OpPRINTR AL
+        OpHALT

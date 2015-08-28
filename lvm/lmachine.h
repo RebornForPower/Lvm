@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "assembler.h"
 #include "global.h"
 
 using namespace std;
@@ -26,7 +27,8 @@ public:
     Lmachine();
     bool init();
     void initreg(); // init register
-    void lvmrun();
+    void initdata();//init data segment
+    void lvmrun(Assembler & assembler);
     void readline();
     char * string2char(string str);
     int string2int(string str);
@@ -34,7 +36,7 @@ public:
     int getregindex(MemoryNode reg);
     int getcmdindex(MemoryNode cmd);
     int getint(MemoryNode mem);
-    void regoperand(int regindex,regop op,int num);
+    void regoperand(int regindex,regop op,int & num);
     //data
     cpu lvmcpu;
     status lvmstatus;
