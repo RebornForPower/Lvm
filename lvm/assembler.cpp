@@ -173,13 +173,13 @@ void Assembler::buildsymbol()
 
 int Assembler::getopcode(string token)
 {
-    byte op=OpHALT;
+    byte op=OPHALT;
     while(op<keynum&&token!=strkey[op])
         op++;
     if(op<keynum)
         return op;
     else
-        return OpERROR;
+        return OPERROR;
 }
 void Assembler::assemblerrun()
 {
@@ -215,7 +215,7 @@ void Assembler::assemblerrun()
             case op:
             {
                 operand=getopcode(token);
-                if(operand==OpERROR)
+                if(operand==OPERROR)
                     cout<<" error operand "<<token<<endl;
                 MemoryNode head;
                 head.value='o';

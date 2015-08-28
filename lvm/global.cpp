@@ -34,17 +34,17 @@ string strkey[]=
     "ZERO",
     "SIGN",
     //operand
-    "OpHALT",
-    "OpCLEAR",
-    "OpADDB",
-    "OpLOAD",
-    "OpLOADVB",
-    "OpSTOREB",
-    "OpINC",
-    "OpCMPVB",
-    "OpJG",
-    "OpJNG",
-    "OpPRINTR",
-    "OpERROR"
+    "OPHALT",
+    "OPCLEAR",
+    "OPADDB",
+    "OPLOAD",
+    "OPLOADVB",
+    "OPSTOREB",
+    "OPINC",
+    "OPCMPVB",
+    "OPJG",
+    "OPJNG",
+    "OPPRINTR",
+    "OPERROR"
 };
 

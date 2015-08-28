@@ -260,12 +260,12 @@ void Lmachine::lvmrun(Assembler & assembler)
         if (command.value=='o') {
             int index=getcmdindex(command);
             switch (index) {
-                case OpHALT:
+                case OPHALT:
                 {
                     lvmstatus=finished;
                     break;
                 }
-                case OpCLEAR:
+                case OPCLEAR:
                 {
                     lvmcpu.pc++;
                     int num=0;
@@ -276,7 +276,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                         }
                     break;
                 }
-                case OpSTOREB:
+                case OPSTOREB:
                 {
                     lvmcpu.pc++;
                     MemoryNode addr=Memory[lvmcpu.pc];
@@ -295,7 +295,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     }
                     break;
                 }
-                case OpLOAD:
+                case OPLOAD:
                 {
                     lvmcpu.pc++;
                     MemoryNode regget=Memory[lvmcpu.pc];
@@ -308,7 +308,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     regoperand(reggetindex, process, pass);
                     break;
                 }
-                case OpLOADVB:
+                case OPLOADVB:
                 {
                     lvmcpu.pc++;
                     MemoryNode reg=Memory[lvmcpu.pc];
@@ -319,7 +319,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     regoperand(regindex, process, num);
                     break;
                 }
-                case OpADDB:
+                case OPADDB:
                 {
                     lvmcpu.pc++;
                     MemoryNode reg=Memory[lvmcpu.pc];
@@ -331,7 +331,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     regoperand(regindex, add, addrvalue);
                     break;
                 }
-                case OpINC:
+                case OPINC:
                 {
                     lvmcpu.pc++;
                     int num=1;
@@ -340,7 +340,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     regoperand(regindex, add, num);
                     break;
                 }
-                case OpCMPVB:
+                case OPCMPVB:
                 {
                     lvmcpu.pc++;
                     MemoryNode reg=Memory[lvmcpu.pc];
@@ -351,7 +351,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     regoperand(regindex, cmp, num);
                     break;
                 }
-                case OpJG:
+                case OPJG:
                 {
                     if(lvmcpu.sign==0+'0'&&lvmcpu.of==0+'0')
                     {
@@ -362,7 +362,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     }
                     break;
                 }
-                case OpJNG:
+                case OPJNG:
                 {
                     if (lvmcpu.sign==1+'0'&&lvmcpu.of==0+'0')
                     {
@@ -373,7 +373,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     }
                     break;
                 }
-                case OpPRINTR:
+                case OPPRINTR:
                 {
                     lvmcpu.pc++;
                     int num;

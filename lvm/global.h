@@ -123,18 +123,18 @@ enum key
         B ->[B]即B地址单元中的内容
         VB->立即数本身
     */
-    OpHALT,
-    OpCLEAR,    //clear register
-    OpADDB,
-    OpLOAD,
-    OpLOADVB,
-    OpSTOREB, //[B]=register
-    OpINC,     //register=register+1
-    OpCMPVB,    //compare register B
-    OpJG,
-    OpJNG,
-    OpPRINTR,
-    OpERROR
+    OPHALT,
+    OPCLEAR,    //clear register
+    OPADDB,
+    OPLOAD,
+    OPLOADVB,
+    OPSTOREB, //[B]=register
+    OPINC,     //register=register+1
+    OPCMPVB,    //compare register B
+    OPJG,
+    OPJNG,
+    OPPRINTR,
+    OPERROR
 };
 
 #endif /* defined(__Lmachine__global__) */
