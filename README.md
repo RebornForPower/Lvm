@@ -12,7 +12,6 @@
 
 
 <h2>Support instruction:<h2>
-
 <table>
 <tbody>
 <tr><td><em><h4>Instruction</h4></em></td><td><em><h4>Explanation</h4></em></td><td><em><h4>Example</h4><em></td></tr>
@@ -29,6 +28,15 @@
 <tr><td><h5>OpPRINTR</td><td><h5>输出寄存器的值至终端<h5></td><td><h5>OpPRINTR AL</h5></td></tr>
 </tbody>
 </table>
+
+
+
+
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
 
 
 <h2>Lincense:</h2>
