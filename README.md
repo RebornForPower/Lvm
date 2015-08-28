@@ -13,7 +13,7 @@
 
 | Instruction  | Explanation            |   Example        |
 | ------------ | ---------------------- | -------------    |
-|   OpHALT     |     虚拟机停止         |                  |
+|   OpHALT     |     虚拟机停止         |  OpHALT          |
 |   OpCLEAR    |     寄存器清零         |  OpCLEAR AL      |
 |   OpADDB     |     寄存器与[B]的值相加|  OpADDB AL [10]  |
 |   OpLOAD     |     寄存器之间赋值     |  OpLOAD AL CL    |
