@@ -28,7 +28,12 @@
                OPHALT
                
 ###Out:
-![image](https://github.com/Leviathan1995/lvm/raw/master/span.png)    
+![image](https://github.com/Leviathan1995/lvm/raw/master/span.png)
+
+##Syntax
+- 注释使用#
+- 格式: 操作码 操作数1 操作数2
+- 当同时使用寄存器与立即数两个操作数时,寄存器为操作数1,立即数为操作数2
               
 ##Support Instruction:
 
