@@ -1,7 +1,7 @@
 # Lvm
 
        --- a simple virtual machine 
-
+                            by:leviathan
 ##Building and Running :
 
 ###Linux,*nix,Mac OSX:
