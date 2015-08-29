@@ -39,16 +39,16 @@
 
 | Instruction  | Explanation            |   Example        |
 | ------------ | ---------------------- | -------------    |
-|   OpHALT     |     虚拟机停止         |  OpHALT          |
-|   OpCLEAR    |     寄存器清零         |  OpCLEAR AL      |
-|   OpADDB     |     寄存器与[B]的值相加|  OpADDB AL [10]  |
-|   OpLOAD     |     寄存器之间赋值     |  OpLOAD AL CL    |
-|   OpLOADVB   |     立即数赋值寄存器   |  OpLOADVB AL 1   |
-|   OpSTOREB   |     寄存器的值存入[B]  |  OpSTOREB 10 AL  |
-|   OpINC      |     自增1              |  OpINC AL        |
-|   OpCMPVB    |     寄存器与[B]比较    |  OpCMPVB CL 5    |
-|   OpJG       |     大于则跳转         |  OpJG            |
-|   OpJNG      |     不大于则跳转       |  OpJNG           |
-|   OpPRINTR   |  输出寄存器的值至终端  |  OpPRINTR AL     |
+|   OPHALT     |     虚拟机停止         |  OPHALT          |
+|   OPCLEAR    |     寄存器清零         |  OPCLEAR AL      |
+|   OPADDB     |     寄存器与[B]的值相加|  OPADDB AL [10]  |
+|   OPLOAD     |     寄存器之间赋值     |  OPLOAD AL CL    |
+|   OPLOADVB   |     立即数赋值寄存器   |  OPLOADVB AL 1   |
+|   OPSTOREB   |     寄存器的值存入[B]  |  OPSTOREB 10 AL  |
+|   OPINC      |     自增1              |  OPINC AL        |
+|   OPCMPVB    |     寄存器与[B]比较    |  OPCMPVB CL 5    |
+|   OPJG       |     大于则跳转         |  OPJG            |
+|   OPJNG      |     不大于则跳转       |  OPJNG           |
+|   OPPRINTR   |  输出寄存器的值至终端  |  OPPRINTR AL     |
 <h2>Lincense:</h2>
     MIT
