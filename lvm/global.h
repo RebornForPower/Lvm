@@ -17,7 +17,7 @@ using namespace std;
 
 typedef char byte;//byte
 #define memsize 1024 //1024 byte
-#define keynum 23
+#define keynum 24
 
 extern vector<string> codestream;
 extern byte memory[];
@@ -124,16 +124,17 @@ enum key
         VB->立即数本身
     */
     OPHALT,
-    OPCLEAR,    //clear register
-    OPADDB,
-    OPLOAD,
-    OPLOADVB,
-    OPSTOREB, //[B]=register
-    OPINC,     //register=register+1
+    OPCLEAR,    //register=0
+    OPADDB,     //register=register+[B]
+    OPSUBVB,     //register=register-B
+    OPLOAD,     //register1=register2
+    OPLOADVB,   //register=B
+    OPSTOREB,   //[B]=register
+    OPINC,      //register=register+1
     OPCMPVB,    //compare register B
     OPJG,
     OPJNG,
-    OPPRINTR,
+    OPPRINTR,   //print register value to terminal
     OPERROR
 };
 

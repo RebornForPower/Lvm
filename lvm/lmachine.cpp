@@ -74,6 +74,9 @@ void Lmachine::regoperand(int regindex, regop op,int &num)
                 case add:
                     lvmcpu.al=((lvmcpu.al-'0')+num)+'0';
                     break;
+                case sub:
+                    lvmcpu.al=((lvmcpu.al-'0')-num)+'0';
+                    break;
                 case cmp:
                     if(lvmcpu.al-'0'<num)
                     {
@@ -99,6 +102,9 @@ void Lmachine::regoperand(int regindex, regop op,int &num)
                     break;
                 case add:
                     lvmcpu.cl=((lvmcpu.cl-'0')+num)+'0';
+                    break;
+                case sub:
+                    lvmcpu.cl=((lvmcpu.cl-'0')-num)+'0';
                     break;
                 case assign:
                     num=lvmcpu.cl-'0';
@@ -158,13 +164,20 @@ bool Lmachine::init()
     }
     cout<<"output file path and name:";
     cin>>outfile;
-    ofstream newfilepath;
-    newfilepath.open(string2char(outfile),ios::out);
-    if(newfilepath)
+    if(outfile=="NULL")
     {
-        cout<<"file "<<Lmachine::outfile<<" is create success"<<endl;
+        return true;
     }
-    return true;
+    else
+    {
+        ofstream newfilepath;
+        newfilepath.open(string2char(outfile),ios::out);
+        if(newfilepath)
+        {
+            cout<<"file "<<Lmachine::outfile<<" is create success"<<endl;
+        }
+        return true;
+    }
 }
 
 char * Lmachine::string2char(string str)
@@ -331,6 +344,17 @@ void Lmachine::lvmrun(Assembler & assembler)
                     regoperand(regindex, add, addrvalue);
                     break;
                 }
+                case OPSUBVB:
+                {
+                    lvmcpu.pc++;
+                    MemoryNode reg=Memory[lvmcpu.pc];
+                    int regindex=getregindex(reg);
+                    lvmcpu.pc++;
+                    MemoryNode memnum=Memory[lvmcpu.pc];
+                    int num=getint(memnum);
+                    regoperand(regindex, sub,num);
+                    break;
+                }
                 case OPINC:
                 {
                     lvmcpu.pc++;
@@ -381,6 +405,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     int regindex=getregindex(reg);
                     regoperand(regindex, assign, num);
                     cout<<num<<endl;
+                    break;
                 }
                 default:
                     break;

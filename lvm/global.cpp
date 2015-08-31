@@ -37,6 +37,7 @@ string strkey[]=
     "OPHALT",
     "OPCLEAR",
     "OPADDB",
+    "OPSUBVB",
     "OPLOAD",
     "OPLOADVB",
     "OPSTOREB",
