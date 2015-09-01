@@ -32,9 +32,9 @@
 ![image](https://github.com/Leviathan1995/lvm/raw/master/span.png)
 
 ##Syntax
-- Comments need use '#'
-- Instruction: Opcode Register (or/and) Mermory
-- Priority:Register >Memory/Number
+- 注释使用 '#'
+- 格式: 操作码 操作数1 操作数2
+- 优先级: 寄存器需要在立即数或内存地址前面 例如 OPADDB AL [10]
               
 ##Support Instruction:
 
