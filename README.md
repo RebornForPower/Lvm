@@ -1,8 +1,8 @@
 # Lvm
 
-       --- A simple virtual machine based on cpu instruction set.Includes some DIY instructions,
-       and it is still updating.
-                            by:leviathan
+       --- A simple virtual machine based on cpu  instruction  set.
+           Includes some DIY instructions,and it is still updating.
+                                                        by:leviathan
 ##Building and Running :
 
 ###Linux,*nix,Mac OSX:
