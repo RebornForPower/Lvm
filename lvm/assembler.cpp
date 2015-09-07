@@ -53,7 +53,7 @@ tokentype Assembler::lexer(string &token,int index)
                     type=label;
                     token+=":";
             }
-            else if(command==keynum&&codestream[index]!=":")
+            else if(command==keynum&&codestream[index]!=":"&&codestream[index-1]!="\"")
             {
                 int index;
                 index=searchreg(token);
@@ -61,6 +61,10 @@ tokentype Assembler::lexer(string &token,int index)
                     type=reflabel;
                 else
                     type=reg;
+            }
+            else if (command==keynum&&codestream[index-1]=="\""&&codestream[index+1]=="\"")
+            {
+                type=str;
             }
             else
             {
@@ -82,6 +86,10 @@ tokentype Assembler::lexer(string &token,int index)
     else if (token[0]>='0'&&token[0]<='9')
     {
         type=number;
+    }
+    else if(codestream[index]=="\"")
+    {
+        type=quotes;
     }
     else
         type=unknow;
@@ -258,6 +266,21 @@ void Assembler::assemblerrun()
                     Memory.push_back(head);
                 }
                 break;
+            case str:
+            {
+                MemoryNode head;
+                head.value='s';
+                head.next=NULL;
+                MemoryNode *pointer=&head;
+                for (int index=0; index<token.length(); index++) {
+                    MemoryNode *node=new MemoryNode;
+                    node->value=token[index];
+                    node->next=NULL;
+                    pointer->next=node;
+                    pointer=node;
+                }
+                Memory.push_back(head);
+            }
             case number:
                 {
                     MemoryNode head;
