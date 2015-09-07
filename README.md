@@ -24,7 +24,7 @@
                OPADDB AL 10   #AL=AL+[10]
                OPSTOREB 10 AL #[10]=AL  
                OPINC CL       #CL=CL+1
-               OPCMPVB CL 11   #CMP 4
+               OPCMPVB CL 11   #CMP 11
                OPJG    quit
                OPJNG    add
        quit:   OPPRINTR AL
