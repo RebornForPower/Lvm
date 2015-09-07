@@ -10,10 +10,9 @@
 #include <fstream>
 #include <sstream>
 #include <cstdio>
+#include <algorithm>
 #include "lmachine.h"
 using namespace std;
-
-#define file "sum.txt"
 
 Lmachine::Lmachine()
 {
@@ -56,6 +55,44 @@ int Lmachine::getint(MemoryNode mem)
     return number;
 }
 
+string Lmachine::getstring(MemoryNode mem)
+{
+    string str="";
+    MemoryNode *pointer=mem.next;
+    while (pointer!=NULL) {
+        str+=pointer->value;
+        pointer=pointer->next;
+    }
+    return str;
+}
+
+string Lmachine::getdatavalue(int addr)
+{
+    string strvalue;
+    char value=data[addr];
+    if(value=='$')
+    {
+        strvalue='0';
+    }
+    else
+    {
+        strvalue=value;
+        addr++;
+        while(data[addr]!='$')
+            {
+                value=data[addr];
+                strvalue+=value;
+                addr++;
+            }
+    }
+    return strvalue;
+}
+
+void Lmachine::cleareg(int regindex)
+{
+    int num=0;
+    regoperand(regindex, clear, num);
+}
 void Lmachine::regoperand(int regindex, regop op,int &num)
 {
     switch (regindex) {
@@ -63,22 +100,70 @@ void Lmachine::regoperand(int regindex, regop op,int &num)
         {
             switch (op) {
                 case clear:
-                    lvmcpu.al=0+'0';
+                    for (int index=0; index<8; index++) {
+                        lvmcpu.al[index]=0+'0';
+                    }
                     break;
                 case assign:
-                    num=lvmcpu.al-'0';
+                {
+                    string strnum;
+                    for (int index=0; index<8; index++) {
+                        strnum+=lvmcpu.al[index];
+                    }
+                    num=string2int(strnum);
                     break;
+                }
                 case process:
-                    lvmcpu.al=num+'0';
+                {
+                    cleareg(regindex);
+                    string strnum;
+                    size_t index=0;
+                    int strindex;
+                    strnum=int2string(num);
+                    for (index=8-strnum.length(),strindex=0; index<8; strindex++,index++) {
+                        lvmcpu.al[index]=strnum[strindex];
+                    }
                     break;
+                }
                 case add:
-                    lvmcpu.al=((lvmcpu.al-'0')+num)+'0';
+                {
+                    string regnum;
+                    size_t index;
+                    int strindex;
+                    for (int index=0; index<8; index++) {
+                        regnum+=lvmcpu.al[index];
+                    }
+                    int regnumber=string2int(regnum);
+                    int add=regnumber+num;
+                    string addnum=int2string(add);
+                    for (index=8-addnum.length(),strindex=0; index<8; strindex++,index++) {
+                        lvmcpu.al[index]=addnum[strindex];
+                    }
                     break;
+                }
                 case sub:
-                    lvmcpu.al=((lvmcpu.al-'0')-num)+'0';
+                {
+                    string regnum;
+                    size_t index;
+                    int strindex;
+                    for (int index=0; index<8; index++) {
+                        regnum+=lvmcpu.al[index];
+                    }
+                    int subnum=string2int(regnum)-num;
+                    string strsubnum=int2string(subnum);
+                    for (index=8-strsubnum.length(),strindex=0; index<8; strindex++,index++) {
+                        lvmcpu.al[index]=strsubnum[strindex];
+                    }
                     break;
+                }
                 case cmp:
-                    if(lvmcpu.al-'0'<num)
+                {
+                    string strregnum;
+                    for (int index=0;index<8;index++) {
+                        strregnum+=lvmcpu.al[index];
+                    }
+                    int regnum=string2int(strregnum);
+                    if(regnum<num)
                     {
                         lvmcpu.sign=1+'0';
                         lvmcpu.of=0+'0';
@@ -89,6 +174,7 @@ void Lmachine::regoperand(int regindex, regop op,int &num)
                         lvmcpu.of=0+'0';
                     }
                     break;
+                }
                 default:
                     break;
             }
@@ -98,22 +184,69 @@ void Lmachine::regoperand(int regindex, regop op,int &num)
         {
             switch (op) {
                 case clear:
-                    lvmcpu.cl=0+'0';
+                    for (int index=0; index<8; index++) {
+                        lvmcpu.cl[index]=0+'0';
+                    }
                     break;
                 case add:
-                    lvmcpu.cl=((lvmcpu.cl-'0')+num)+'0';
+                {
+                    string regnum;
+                    size_t index;
+                    int strindex;
+                    for (int index=0; index<8; index++) {
+                        regnum+=lvmcpu.cl[index];
+                    }
+                    int regnumber=string2int(regnum);
+                    int add=regnumber+num;
+                    string addnum=int2string(add);
+                    for (index=8-addnum.length(),strindex=0; index<8; strindex++,index++) {
+                        lvmcpu.cl[index]=addnum[strindex];
+                    }
                     break;
+                }
                 case sub:
-                    lvmcpu.cl=((lvmcpu.cl-'0')-num)+'0';
+                {
+                    string regnum;
+                    size_t index;
+                    int strindex;
+                    for (int index=0; index<8; index++) {
+                        regnum+=lvmcpu.cl[index];
+                    }
+                    int subnum=string2int(regnum)-num;
+                    string strsubnum=int2string(subnum);
+                    for (index=8-strsubnum.length(),strindex=0; index<8; strindex++,index++) {
+                        lvmcpu.cl[index]=strsubnum[strindex];
+                    }
                     break;
+                }
                 case assign:
-                    num=lvmcpu.cl-'0';
+                {
+                    string strnum;
+                    for (int index=0; index<8; index++) {
+                        strnum+=lvmcpu.cl[index];
+                    }
+                    num=string2int(strnum);
                     break;
+                }
                 case process:
-                    lvmcpu.cl=num+'0';
+                {
+                    string strnum;
+                    size_t index;
+                    int strindex;
+                    strnum=int2string(num);
+                    for (index=8-strnum.length(),strindex=0; index<8; strindex++,index++) {
+                        lvmcpu.cl[index]=strnum[strindex];
+                    }
                     break;
+                }
                 case cmp:
-                    if(lvmcpu.cl-'0'<num)
+                {
+                    string strregnum;
+                    for (int index=0;index<8;index++) {
+                        strregnum+=lvmcpu.cl[index];
+                    }
+                    int regnum=string2int(strregnum);
+                    if(regnum<num)
                     {
                         lvmcpu.sign=1+'0';
                         lvmcpu.of=0+'0';
@@ -124,6 +257,7 @@ void Lmachine::regoperand(int regindex, regop op,int &num)
                         lvmcpu.of=0+'0';
                     }
                     break;
+                }
                 default:
                     break;
             }
@@ -153,9 +287,9 @@ string Lmachine::int2string(int num)
 bool Lmachine::init()
 {
     cout<<"input file path and name:";
-    cin>>infile;;
-    ofstream searchinfile;
-    searchinfile.open(string2char(Lmachine::infile));
+    cin>>infile;
+    ifstream searchinfile;
+    searchinfile.open(string2char(Lmachine::infile)); //readline()
     if(!searchinfile)
         cout<<"file "<<infile<<" not find "<<endl;
     while (!searchinfile) {
@@ -164,7 +298,7 @@ bool Lmachine::init()
     }
     cout<<"output file path and name:";
     cin>>outfile;
-    if(outfile=="NULL")
+    if(outfile=="null")
     {
         return true;
     }
@@ -188,7 +322,8 @@ char * Lmachine::string2char(string str)
 void Lmachine::readline()
 {
     int index,length;
-    ifstream code("/Users/Leviathan/Code/Lmachine/Lmachine/sum.txt");
+    ifstream code;
+    code.open(string2char(Lmachine::infile));
     string line;
     while(getline(code,line))
     {
@@ -235,6 +370,25 @@ void Lmachine::readline()
                 codestream.push_back(token);
                 index++;
             }
+            //string
+            else if(line[index]=='"')
+            {
+                string token="";
+                token='"';
+                codestream.push_back(token);
+                index++;
+                token="";
+                while(line[index]!='"')
+                {
+                    token+=line[index];
+                    index++;
+                }
+                codestream.push_back(token);
+                token="";
+                token='"';
+                codestream.push_back(token);
+                index++;
+            }
             //space
             else
                 index++;
@@ -245,25 +399,13 @@ void Lmachine::readline()
 void Lmachine::initdata()
 {
     for (int index=0; index<memsize; index++) {
-        data[index]=0+'0';
+        data[index]='$';
     }
 }
-void Lmachine::initreg()
-{
-    lvmcpu.al=0;
-    lvmcpu.bl=0;
-    lvmcpu.cl=0;
-    lvmcpu.dl=0;
-    lvmcpu.bp=0;
-    lvmcpu.ip=0;
-    lvmcpu.sp=0;
-    lvmcpu.pc=-1;
-    lvmcpu.carry=0;
-    lvmcpu.bp=0;
-}
+
 void Lmachine::lvmrun(Assembler & assembler)
 {
-    initreg();// init register
+    lvmcpu.pc=-1;
     initdata();
     lvmstatus=running;
     cout<<"Lmachine  is running successfully ..."<<endl;
@@ -292,12 +434,12 @@ void Lmachine::lvmrun(Assembler & assembler)
                 case OPSTOREB:
                 {
                     lvmcpu.pc++;
-                    MemoryNode addr=Memory[lvmcpu.pc];
-                    int address=getint(addr);
-                    lvmcpu.pc++;
                     MemoryNode reg=Memory[lvmcpu.pc];
                     int num;
                     int regindex=getregindex(reg);
+                    lvmcpu.pc++;
+                    MemoryNode addr=Memory[lvmcpu.pc];
+                    int address=getint(addr);
                     regoperand(regindex, assign,num);
                     string strnum=int2string(num);
                     for(int index=0;index<strnum.length();index++)
@@ -332,7 +474,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     regoperand(regindex, process, num);
                     break;
                 }
-                case OPADDB:
+                case OPLOADB:
                 {
                     lvmcpu.pc++;
                     MemoryNode reg=Memory[lvmcpu.pc];
@@ -341,7 +483,42 @@ void Lmachine::lvmrun(Assembler & assembler)
                     MemoryNode memnum=Memory[lvmcpu.pc];
                     int num=getint(memnum);
                     int addrvalue=data[num]-'0';
+                    regoperand(regindex, process,addrvalue);
+                    break;
+                }
+                case OPADDB:
+                {
+                    lvmcpu.pc++;
+                    MemoryNode reg=Memory[lvmcpu.pc];
+                    int regindex=getregindex(reg);
+                    lvmcpu.pc++;
+                    MemoryNode memnum=Memory[lvmcpu.pc];
+                    int num=getint(memnum);
+                    int addrvalue=string2int(getdatavalue(num));
                     regoperand(regindex, add, addrvalue);
+                    break;
+                }
+                case OPADDVB:
+                {
+                    lvmcpu.pc++;
+                    MemoryNode reg=Memory[lvmcpu.pc];
+                    int regindex=getregindex(reg);
+                    lvmcpu.pc++;
+                    MemoryNode memnum=Memory[lvmcpu.pc];
+                    int num=getint(memnum);
+                    regoperand(regindex,add, num);
+                    break;
+                }
+                case OPSUBB:
+                {
+                    lvmcpu.pc++;
+                    MemoryNode reg=Memory[lvmcpu.pc];
+                    int regindex=getregindex(reg);
+                    lvmcpu.pc++;
+                    MemoryNode memnum=Memory[lvmcpu.pc];
+                    int num=getint(memnum);
+                    int addrvalue=data[num]-'0';
+                    regoperand(regindex,sub,addrvalue);
                     break;
                 }
                 case OPSUBVB:
@@ -362,6 +539,33 @@ void Lmachine::lvmrun(Assembler & assembler)
                     MemoryNode reg=Memory[lvmcpu.pc];
                     int regindex=getregindex(reg);
                     regoperand(regindex, add, num);
+                    break;
+                }
+                case OPDEC:
+                {
+                    lvmcpu.pc++;
+                    int num=1;
+                    MemoryNode reg=Memory[lvmcpu.pc];
+                    int regindex=getregindex(reg);
+                    regoperand(regindex, sub, num);
+                    break;
+                }
+                case OPLESTR:
+                {
+                    string str;
+                    lvmcpu.pc++;
+                    MemoryNode address=Memory[lvmcpu.pc];
+                    int addr=getint(address);
+                    lvmcpu.pc++;
+                    MemoryNode strcontext=Memory[lvmcpu.pc];
+                    if (strcontext.value=='s') {
+                        str=getstring(strcontext);
+                    }
+                    for(int index=0;index<str.length();index++)
+                    {
+                        data[addr]=str[index];
+                        addr++;
+                    }
                     break;
                 }
                 case OPCMPVB:
