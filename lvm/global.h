@@ -17,7 +17,7 @@ using namespace std;
 
 typedef char byte;//byte
 #define memsize 1024 //1024 byte
-#define keynum 24
+#define keynum 30
 
 extern vector<string> codestream;
 extern byte memory[];
@@ -51,11 +51,11 @@ struct symbol
 struct cpu
 {
     //register
-    byte al;
-    byte bl;
-    byte cl;
-    byte dl;
-    byte ip;
+    char al[8];
+    char bl[8];
+    char cl[8];
+    char dl[8];
+    char ip[8];
     int ir;
     byte sp;
     byte of;
@@ -102,6 +102,8 @@ enum tokentype
     label,
     reflabel,
     number,
+    str,
+    quotes,// "
     unknow
 };
 enum key
@@ -126,14 +128,19 @@ enum key
     OPHALT,
     OPCLEAR,    //register=0
     OPADDB,     //register=register+[B]
-    OPSUBVB,     //register=register-B
+    OPADDVB,    //register=register+B
+    OPSUBB,     //register=register-[B]
+    OPSUBVB,    //register=register-B
     OPLOAD,     //register1=register2
     OPLOADVB,   //register=B
+    OPLOADB,    //register=[B]
     OPSTOREB,   //[B]=register
     OPINC,      //register=register+1
-    OPCMPVB,    //compare register B
+    OPDEC,      //register=register-1
+    OPCMPVB,    //compare register and B
     OPJG,
     OPJNG,
+    OPLESTR,    //[B]=string
     OPPRINTR,   //print register value to terminal
     OPERROR
 };
