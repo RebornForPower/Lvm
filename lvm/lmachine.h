@@ -26,7 +26,6 @@ public:
     //funciton
     Lmachine();
     bool init();
-    void initreg(); // init register
     void initdata();//init data segment
     void lvmrun(Assembler & assembler);
     void readline();
@@ -36,7 +35,10 @@ public:
     int getregindex(MemoryNode reg);
     int getcmdindex(MemoryNode cmd);
     int getint(MemoryNode mem);
+    string getstring(MemoryNode mem);
+    string getdatavalue(int addr);
     void regoperand(int regindex,regop op,int & num);
+    void cleareg(int regindex);
     //data
     cpu lvmcpu;
     status lvmstatus;
