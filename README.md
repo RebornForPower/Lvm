@@ -14,6 +14,8 @@
 ##Example :
 
 ###Source code:
+计算 1+2+3+4...+10=
+
        start : OPCLEAR AL     #AL=0
                OPCLEAR CL     #CL=0
                OPLOADVB CL 1  #CL=1
@@ -22,7 +24,7 @@
                OPADDB AL 10   #AL=AL+[10]
                OPSTOREB 10 AL #[10]=AL  
                OPINC CL       #CL=CL+1
-               OPCMPVB CL 4   #CMP 4
+               OPCMPVB CL 11   #CMP 4
                OPJG    quit
                OPJNG    add
        quit:   OPPRINTR AL
