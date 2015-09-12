@@ -49,6 +49,7 @@
 |   OPLOADVB   |   al=1                 |  OPLOADVB AL 1   |
 |   OPSTOREB   |   [10]=al              |  OPSTOREB 10 AL  |
 |   OPINC      |   al=al+1              |  OPINC AL        |
+|   OPDEC      |   al=al-1              |  OPDEC AL        |
 |   OPCMPVB    |   cl cmp 5             |  OPCMPVB CL 5    |
 |   OPJG       |   if greatet jump      |  OPJG            |
 |   OPJNG      |   if not greater jump  |  OPJNG           |
