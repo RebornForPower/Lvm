@@ -54,6 +54,6 @@
 |   OPJG       |   if greatet jump      |  OPJG            |
 |   OPJNG      |   if not greater jump  |  OPJNG           |
 |   OPPRINTR   |   output al to terminal|  OPPRINTR AL     |
-|   O
+|   OP
 <h2>Lincense:</h2>
     MIT
