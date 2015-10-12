@@ -19,7 +19,6 @@ class Assembler
 {
 public:
     Assembler();
-    vector<symbol> symboltable;
     int searchsymbol(string symbolname,int sign);
     void assemblerrun();
     tokentype lexer(string &token,int index);
