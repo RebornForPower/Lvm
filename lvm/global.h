@@ -17,13 +17,20 @@ using namespace std;
 
 typedef char byte;//byte
 #define memsize 1024 //1024 byte
-#define keynum 30
+#define keynum 37
 
+
+/*
+    Global Variable
+*/
 extern vector<string> codestream;
 extern byte memory[];
 extern byte data[];
 extern string strkey[];
 extern int Mempointer; //memsize max
+
+extern string parastr; //regoperand parameter
+extern int paraint;    //regoperand parameter
 //Memory Node
 struct MemoryNode
 {
@@ -33,19 +40,48 @@ struct MemoryNode
 
 extern vector<MemoryNode> Memory;
 
-//reference symbol
-struct refsymbol
+//token type
+enum tokentype
 {
-    int refsymboladdr;
-    refsymbol *next;
+    op,
+    reg,
+    addr_label,
+    var_symbol,
+    escape_symbol,
+    number,
+    str,
+    quotes,        // "
+    unknow
 };
-//sylbol
-struct symbol
+
+//escape_symbol
+enum escape
 {
+    space, //"\s"
+    newline//"\n"
+};
+//vartiable type
+enum var_type
+{
+    addr_symbol,
+    int_var,
+    int_array,
+    str_var
+};
+
+//symbol
+class symbol
+{
+public:
     string symbolname;
-    int symboladdr; //symbol address
-    refsymbol * first;
+    int int_value;
+    string str_value;
+    int label_addr; //addr_label address
+    bool define;
+    var_type type;
 };
+
+extern vector<symbol> symboltable;
 
 //cpu
 struct cpu
@@ -54,7 +90,7 @@ struct cpu
     char al[8];
     char bl[8];
     char cl[8];
-    char dl[8];
+    char dl[128];
     char ip[8];
     int ir;
     byte sp;
@@ -66,6 +102,8 @@ struct cpu
     byte zero;
     byte sign;
 };
+
+//register operation
 enum regop
 {
     add,
@@ -95,17 +133,7 @@ enum lvmendstatus
     fail,
 };
 
-enum tokentype
-{
-    op,
-    reg,
-    label,
-    reflabel,
-    number,
-    str,
-    quotes,// "
-    unknow
-};
+
 enum key
 {
     //register
@@ -121,12 +149,18 @@ enum key
     carry,
     zero,
     sign,
-    /* 
-        B ->[B]即B地址单元中的内容
-        VB->立即数本身
-    */
+    /*
+     B ->[B]即B地址单元中的内容
+     VB->立即数本身
+     */
     OPHALT,
     OPCLEAR,    //register=0
+    OPINIT,     //id=register
+    OPASSIGN,   //id=reg/num
+    OPBINADD,   //id1=id2+id3
+    OPBINSUB,   //id1=id2-id3
+    OPBINMUL,   //id1=id2*id3
+    OPBINDIV,   //id1=id2/id3
     OPADDB,     //register=register+[B]
     OPADDVB,    //register=register+B
     OPSUBB,     //register=register-[B]
@@ -142,7 +176,13 @@ enum key
     OPJNG,
     OPLESTR,    //[B]=string
     OPPRINTR,   //print register value to terminal
+    OPEND,      //end code block
     OPERROR
 };
+
+/*
+    Global Function
+*/
+symbol * getsymbol(string symbolname);
 
 #endif /* defined(__Lmachine__global__) */
