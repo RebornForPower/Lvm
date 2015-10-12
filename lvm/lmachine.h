@@ -37,8 +37,9 @@ public:
     int getint(MemoryNode mem);
     string getstring(MemoryNode mem);
     string getdatavalue(int addr);
-    void regoperand(int regindex,regop op,int & num);
+    void regoperand(int regindex,regop op,int & num,string &str);
     void cleareg(int regindex);
+    int findend(string variablename);
     //data
     cpu lvmcpu;
     status lvmstatus;
