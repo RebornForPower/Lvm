@@ -43,22 +43,24 @@ tokentype Assembler::lexer(string &token,int index)
 {
     tokentype type=unknow;
     int command;
+    //alphabet
     if (isalpha(token[0]))
     {
         command=searchcmd(token);
         if(index+1<=codestream.size())
         {
+            //address label
             if(command==keynum&&codestream[index+1]==":")
             {
-                    type=label;
-                    token+=":";
+                type=addr_label;
+                token+=":";
             }
-            else if(command==keynum&&codestream[index]!=":"&&codestream[index-1]!="\"")
+            else if(command==keynum&&codestream[index+1]!=":"&&codestream[index-1]!="\"")
             {
                 int index;
                 index=searchreg(token);
                 if (index>9)
-                    type=reflabel;
+                    type=var_symbol;
                 else
                     type=reg;
             }
@@ -71,6 +73,7 @@ tokentype Assembler::lexer(string &token,int index)
                 type=op;
             }
         }
+        //end
         else
         {
             int index;
@@ -80,16 +83,23 @@ tokentype Assembler::lexer(string &token,int index)
             else if(index<keynum&&index>9)
                 type=op;
             else
-                type=reflabel;
+                type=var_symbol;
         }
     }
+    //number
     else if (token[0]>='0'&&token[0]<='9')
     {
         type=number;
     }
+    //' " '
     else if(codestream[index]=="\"")
     {
         type=quotes;
+    }
+    //string
+    else if(codestream[index-1]=="\""&&codestream[index+1]=="\"")
+    {
+        type=str;
     }
     else
         type=unknow;
@@ -97,10 +107,16 @@ tokentype Assembler::lexer(string &token,int index)
 }
 
 /*
+ 
+parameter:
+    0 :undefine
+    1 :define search
+ 
+ return :
     -2  :already define
     -1  :undefine
     index : retun index
-*/
+ */
 int Assembler::searchsymbol(string symbolname, int sign)
 {
     int index;
@@ -109,7 +125,7 @@ int Assembler::searchsymbol(string symbolname, int sign)
         if(symbolname==symboltable[index].symbolname)
             break;
     }
-    if(index<symboltable.size()&&sign==0)
+    if(index<symboltable.size()&&sign==0&&symboltable[index].type==addr_symbol)
     {
         cout<<"the label "<<symbolname<<"is already define "<<endl;
         return -2;
@@ -130,48 +146,30 @@ void Assembler::buildsymbol()
         type=lexer(token,index);
         switch (type)
         {
-            case label:
-                if(searchsymbol(token, 0)==-1) //not define
+            case addr_label:
+                if(searchsymbol(token, 0)==-1) // not define
                 {
                     symbol sym;
-                    sym.symbolname=codestream[index];
-                    sym.symboladdr=int(index-symboltable.size()*2);
-                    sym.first=NULL;
+                    sym.symbolname=token;
+                    sym.label_addr=int(index-symboltable.size()*2);
+                    sym.type=addr_symbol;
                     symboltable.push_back(sym);
                 }
                 index++;
                 break;
-            case reflabel:
+            case var_symbol:
             {
-                int symbolindex=searchsymbol(token,1);
-                if(symbolindex==-1)
+                if(searchsymbol(token, 0)==-1) //not define
                 {
-                    //undefine
-                    continue;
-                }
-                else
-                {
-                    refsymbol *newsymbol=new refsymbol;
-                    newsymbol->refsymboladdr=symbolindex;
-                    newsymbol->next=NULL;
-                    if(symboltable[symbolindex].first==NULL)
-                        symboltable[symbolindex].first=newsymbol;
-                    else
-                    {
-                        refsymbol * ref=symboltable[symbolindex].first;
-                        refsymbol *refnode=ref;
-                        while (ref!=NULL)
-                        {
-                            refnode=ref;
-                            ref=ref->next;
-                        }
-                        refnode->next=newsymbol;
-                    }
+                    symbol sym;
+                    sym.symbolname=token;
+                    sym.define=false;
+                    symboltable.push_back(sym);
                 }
                 break;
             }
             case unknow:
-                cout<<" the label"<<token<<" is unknown "<<endl;
+                cout<<" the label "<<token<<" is unknown "<<endl;
                 break;
             default:
                 break;
@@ -191,7 +189,6 @@ int Assembler::getopcode(string token)
 }
 void Assembler::assemblerrun()
 {
-    int labelindex=0;
     int operand;
     buildsymbol();
     for(int index=0;index<codestream.size();index++)
@@ -199,7 +196,7 @@ void Assembler::assemblerrun()
         string token=codestream[index];
         tokentype type=lexer(token,index);
         switch (type) {
-            case label:
+            case addr_label:
                 index++;
                 break;
             case reg:
@@ -243,29 +240,24 @@ void Assembler::assemblerrun()
                 Memory.push_back(head);
                 break;
             }
-            case reflabel:
-                labelindex=searchsymbol(token,1);
-                if (labelindex==-1) {
-                    cout<<" no such  a label"<<endl;
-                }
-                else
+            case var_symbol:
+            {
+                MemoryNode head;
+                string var=token;
+                head.value='v';
+                head.next=NULL;
+                MemoryNode * pointer=&head;
+                for(int index=0;index<var.length();index++)
                 {
-                    MemoryNode head;
-                    string addr=int2string(symboltable[labelindex].symboladdr);
-                    head.value=addr[0];
-                    head.next=NULL;
-                    MemoryNode * pointer=&head;
-                    for(int index=1;index<addr.length();index++)
-                    {
-                        MemoryNode *node=new MemoryNode;
-                        node->value=addr[index];
-                        node->next=NULL;
-                        pointer->next=node;
-                        pointer=node;
-                    }
-                    Memory.push_back(head);
+                    MemoryNode *node=new MemoryNode;
+                    node->value=var[index];
+                    node->next=NULL;
+                    pointer->next=node;
+                    pointer=node;
                 }
+                Memory.push_back(head);
                 break;
+            }
             case str:
             {
                 MemoryNode head;
@@ -280,22 +272,24 @@ void Assembler::assemblerrun()
                     pointer=node;
                 }
                 Memory.push_back(head);
+                break;
             }
             case number:
-                {
-                    MemoryNode head;
-                    head.value=token[0];
-                    head.next=NULL;
-                    MemoryNode *pointer=&head;
-                    for (int index=1; index<token.length(); index++) {
-                        MemoryNode *node=new MemoryNode;
-                        node->value=token[index];
-                        node->next=NULL;
-                        pointer->next=node;
-                        pointer=node;
-                    }
-                    Memory.push_back(head);
+            {
+                MemoryNode head;
+                head.value='n';
+                head.next=NULL;
+                MemoryNode *pointer=&head;
+                for (int index=0; index<token.length(); index++) {
+                    MemoryNode *node=new MemoryNode;
+                    node->value=token[index];
+                    node->next=NULL;
+                    pointer->next=node;
+                    pointer=node;
                 }
+                Memory.push_back(head);
+                break;
+            }
             default:
                 break;
         }
