@@ -13,11 +13,14 @@
 using namespace std;
 
 vector<string> codestream;
+vector<symbol> symboltable;
 vector<MemoryNode> Memory;
 byte memory[memsize];
 byte data[memsize]; //data segment
 
 int Mempointer=0;
+string parastr=" ";
+int paraint=0;
 string strkey[]=
 {
     //register
@@ -36,6 +39,12 @@ string strkey[]=
     //operand
     "OPHALT",
     "OPCLEAR",
+    "OPINIT",
+    "OPASSIGN",
+    "OPBINADD",
+    "OPBINSUB",
+    "OPBINMUL",
+    "OPBINDIV",
     "OPADDB",
     "OPADDVB",
     "OPSUBB",
@@ -51,6 +60,22 @@ string strkey[]=
     "OPJNG",
     "OPLESTR",
     "OPPRINTR",
+    "OPEND",
     "OPERROR"
 };
 
+symbol * getsymbol(string symbolname)
+{
+    symbol *sym=NULL;
+    for(int index=0;index<symboltable.size();index++)
+    {
+        if(symbolname==symboltable[index].symbolname)
+        {
+            sym=&symboltable[index];
+            return sym;
+        }
+        else
+            continue;
+    }
+    return sym;
+}
