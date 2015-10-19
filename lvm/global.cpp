@@ -13,7 +13,7 @@
 using namespace std;
 
 vector<string> codestream;
-vector<symbol> symboltable;
+vector<symbol *> symboltable;
 vector<MemoryNode> Memory;
 byte memory[memsize];
 byte data[memsize]; //data segment
@@ -61,6 +61,7 @@ string strkey[]=
     "OPLESTR",
     "OPPRINTR",
     "OPEND",
+    "OPPAUSE",
     "OPERROR"
 };
 
@@ -69,9 +70,9 @@ symbol * getsymbol(string symbolname)
     symbol *sym=NULL;
     for(int index=0;index<symboltable.size();index++)
     {
-        if(symbolname==symboltable[index].symbolname)
+        if(symbolname==symboltable[index]->symbolname)
         {
-            sym=&symboltable[index];
+            sym=symboltable[index];
             return sym;
         }
         else
