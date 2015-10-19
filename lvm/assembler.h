@@ -20,6 +20,7 @@ class Assembler
 public:
     Assembler();
     int searchsymbol(string symbolname,int sign);
+    int count_addrlabel(int index);
     void assemblerrun();
     tokentype lexer(string &token,int index);
     void buildsymbol();             //build symbol table
