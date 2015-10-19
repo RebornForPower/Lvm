@@ -98,8 +98,9 @@ int Lmachine::findend(string addr_label)
     int index=0;
     for (index=0;index<Memory.size(); index++) {
         MemoryNode node=Memory[index];
-        if(node.value=='o'&&getcmdindex(node)==36)
+        if(node.value=='o'&&getcmdindex(node)==35)
         {
+            index++;
             MemoryNode operand=Memory[index];
             string stroperand=getstring(operand);
             if (stroperand==addr_label) {
@@ -530,12 +531,14 @@ void Lmachine::lvmrun(Assembler & assembler)
                             string str;
                             regoperand(regindex, assign, paraint, str);
                             sym->str_value=str;
+                            sym->type=str_var;
                         }
                         else //number
                         {
                             int num;
                             regoperand(regindex, assign, num, parastr);
                             sym->int_value=num;
+                            sym->type=int_var;
                         }
                     }
                     //value
@@ -546,20 +549,28 @@ void Lmachine::lvmrun(Assembler & assembler)
                         {
                             int num=getint(assign_value);
                             sym->int_value=num;
+                            sym->type=int_var;
                         }
                         //string
                         else if(assign_value.value=='s')
                         {
                             string str=getstring(assign_value);
                             sym->str_value=str;
+                            sym->type=str_var;
                         }
                         else if(assign_value.value=='v')
                         {
                             symbol *strassign=getsymbol(getstring(assign_value));
                             if(strassign->type==int_var)
-                                sym->int_value=getsymbol((getstring(assign_value)))->int_value;
-                            else if(getsymbol(getstring(assign_value))->type==str_var)
-                                sym->str_value=getsymbol(getstring(assign_value))->int_value;
+                            {
+                                sym->int_value=strassign->int_value;
+                                sym->type=int_var;
+                            }
+                            else if(strassign->type==str_var)
+                            {
+                                sym->str_value=strassign->str_value;
+                                sym->type=str_var;
+                            }
                         }
                     }
                     break;
@@ -589,7 +600,8 @@ void Lmachine::lvmrun(Assembler & assembler)
                     MemoryNode regget=Memory[lvmcpu.pc];
                     int reggetindex=getregindex(regget);
                     lvmcpu.pc++;
-                    MemoryNode outvalue=Memory[lvmcpu.pc];                        int regoutindex=getregindex(outvalue);
+                    MemoryNode outvalue=Memory[lvmcpu.pc];
+                    int regoutindex=getregindex(outvalue);
                     int pass;
                     regoperand(regoutindex, assign, pass,parastr);
                     regoperand(reggetindex, process, pass,parastr);
@@ -645,7 +657,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     lvmcpu.pc++;
                     MemoryNode add1=Memory[lvmcpu.pc];
                     int add1num;
-                    if (add1.value=='s')
+                    if (add1.value=='v')
                     {
                         string stradd1=getstring(add1);
                         add1num=getsymbol(stradd1)->int_value;
@@ -655,7 +667,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     lvmcpu.pc++;
                     MemoryNode add2=Memory[lvmcpu.pc];
                     int add2num;
-                    if (add2.value=='s') {
+                    if (add2.value=='v') {
                         string stradd2=getstring(add2);
                         add2num=getsymbol(stradd2)->int_value;
                     }
@@ -663,6 +675,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                         add2num=getint(add2);
                     int savenum=add1num+add2num;
                     savesym->int_value=savenum;
+                    savesym->type=int_var;
                     break;
                 }
                 case OPADDB:
@@ -697,7 +710,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     lvmcpu.pc++;
                     MemoryNode sub1=Memory[lvmcpu.pc];
                     int sub1num;
-                    if (sub1.value=='s')
+                    if (sub1.value=='v')
                     {
                         string strsub1=getstring(sub1);
                         sub1num=getsymbol(strsub1)->int_value;
@@ -707,14 +720,15 @@ void Lmachine::lvmrun(Assembler & assembler)
                     lvmcpu.pc++;
                     MemoryNode sub2=Memory[lvmcpu.pc];
                     int sub2num;
-                    if (sub2.value=='s') {
+                    if (sub2.value=='v') {
                         string strsub2=getstring(sub2);
                         sub2num=getsymbol(strsub2)->int_value;
                     }
                     else
                         sub2num=getint(sub2);
-                    int savenum=sub1num+sub2num;
+                    int savenum=sub1num-sub2num;
                     savesym->int_value=savenum;
+                    savesym->type=int_var;
                     break;
                 }
                 case OPSUBB:
@@ -749,7 +763,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     lvmcpu.pc++;
                     MemoryNode mul1=Memory[lvmcpu.pc];
                     int mul1num;
-                    if (mul1.value=='s')
+                    if (mul1.value=='v')
                     {
                         string strmul1=getstring(mul1);
                         mul1num=getsymbol(strmul1)->int_value;
@@ -759,7 +773,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     lvmcpu.pc++;
                     MemoryNode mul2=Memory[lvmcpu.pc];
                     int mul2num;
-                    if (mul2.value=='s') {
+                    if (mul2.value=='v') {
                         string strmul2=getstring(mul2);
                         mul2num=getsymbol(strmul2)->int_value;
                     }
@@ -767,6 +781,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                         mul2num=getint(mul2);
                     int savenum=mul1num*mul2num;
                     savesym->int_value=savenum;
+                    savesym->type=int_var;
                     break;
                 }
                 case OPBINDIV:
@@ -796,6 +811,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                         mul2num=getint(mul2);
                     int savenum=mul1num/mul2num;
                     savesym->int_value=savenum;
+                    savesym->type=int_var;
                     break;
                 }
                 case OPINC:
@@ -880,7 +896,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     if(lvmcpu.pc<findend(strlabel))
                     {
                         if(cmp1num>cmp2num)
-                            lvmcpu.pc=addr_value;
+                            lvmcpu.pc=addr_value-1; //at the begin the lvmcpu.pc ++;
                         else
                             lvmcpu.pc=findend(strlabel);
                     }
@@ -919,28 +935,60 @@ void Lmachine::lvmrun(Assembler & assembler)
                     lvmcpu.pc++;
                     MemoryNode addr_label=Memory[lvmcpu.pc];
                     string strlabel=getstring(addr_label);
-                    int addr_value=getsymbol(strlabel)->label_addr;
+                    symbol *label_sym=getsymbol(strlabel);
+                    int addr_value=label_sym->label_addr;
                     if(lvmcpu.pc<findend(strlabel))
                     {
-                        if(cmp1num>cmp2num)
-                            lvmcpu.pc=addr_value;
+                        if(cmp1num<cmp2num)
+                            lvmcpu.pc=addr_value-1; //at the begin the lvmcpu.pc ++;
                         else
                             lvmcpu.pc=findend(strlabel);
                     }
                     else
-                        lvmcpu.pc++;
+                    {
+                        if (cmp1num<cmp2num) {
+                            lvmcpu.pc=addr_value-1;
+                        }
+                        else
+                            break;
+                    }
                     break;
                 }
                 case OPPRINTR:
                 {
                     lvmcpu.pc++;
-                    int num;
                     MemoryNode reg=Memory[lvmcpu.pc];
                     int regindex=getregindex(reg);
-                    regoperand(regindex, assign, num,parastr);
-                    cout<<num<<endl;
+                    if(regindex==3) //string
+                    {
+                        string str;
+                        regoperand(regindex, assign, paraint, str);
+                        if (str=="\\n") {
+                            cout<<endl;
+                        }
+                        else if(str=="\\s")
+                        {
+                            cout<<" "<<endl;
+                        }
+                        else
+                            cout<<str;
+                    }
+                    else //int
+                    {
+                        int num;
+                        regoperand(regindex, assign, num,parastr);
+                        cout<<num<<endl;
+                    }
                     break;
                 }
+                case OPEND:
+                {
+                    //segment name
+                    lvmcpu.pc++;
+                    break;
+                }
+                case OPPAUSE:
+                    break;
                 default:
                     break;
             }
