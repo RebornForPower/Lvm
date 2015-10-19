@@ -17,7 +17,7 @@ using namespace std;
 
 typedef char byte;//byte
 #define memsize 1024 //1024 byte
-#define keynum 37
+#define keynum 38
 
 
 /*
@@ -57,8 +57,8 @@ enum tokentype
 //escape_symbol
 enum escape
 {
-    space, //"\s"
-    newline//"\n"
+    space,      //"\s"
+    newline     //"\n"
 };
 //vartiable type
 enum var_type
@@ -66,13 +66,23 @@ enum var_type
     addr_symbol,
     int_var,
     int_array,
-    str_var
+    str_var,
+    error_type
 };
 
 //symbol
 class symbol
 {
 public:
+    symbol()
+    {
+        symbolname="";
+        int_value=65535;
+        str_value="";
+        label_addr=0;
+        define=false;
+        type=error_type;
+    }
     string symbolname;
     int int_value;
     string str_value;
@@ -81,7 +91,7 @@ public:
     var_type type;
 };
 
-extern vector<symbol> symboltable;
+extern vector<symbol *> symboltable;
 
 //cpu
 struct cpu
@@ -177,6 +187,7 @@ enum key
     OPLESTR,    //[B]=string
     OPPRINTR,   //print register value to terminal
     OPEND,      //end code block
+    OPPAUSE,    //pause
     OPERROR
 };
 
