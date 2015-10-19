@@ -53,7 +53,6 @@ tokentype Assembler::lexer(string &token,int index)
             if(command==keynum&&codestream[index+1]==":")
             {
                 type=addr_label;
-                token+=":";
             }
             else if(command==keynum&&codestream[index+1]!=":"&&codestream[index-1]!="\"")
             {
@@ -107,35 +106,50 @@ tokentype Assembler::lexer(string &token,int index)
 }
 
 /*
- 
 parameter:
-    0 :undefine
-    1 :define search
- 
- return :
+    -1: sign=label
+    -2: sign=addr_label
+return :
     -2  :already define
     -1  :undefine
     index : retun index
  */
-int Assembler::searchsymbol(string symbolname, int sign)
+int Assembler::searchsymbol(string symbolname,int sign)
 {
     int index;
     for (index=0; index<symboltable.size(); index++)
     {
-        if(symbolname==symboltable[index].symbolname)
+        if(symbolname==symboltable[index]->symbolname)
             break;
     }
-    if(index<symboltable.size()&&sign==0&&symboltable[index].type==addr_symbol)
+    if(index<symboltable.size()&&sign==-2&&symboltable[index]->type==addr_symbol)
     {
-        cout<<"the label "<<symbolname<<"is already define "<<endl;
+        cout<<"the label "<<symbolname<<" is already define "<<endl;
         return -2;
     }
-    else if (index<symboltable.size()&&sign==1)
+    else if (index<symboltable.size())
         return index;
     else
         return -1;
     
 }
+
+//get symboltable addr_label
+int Assembler::count_addrlabel(int index)
+{
+    int sum=0;
+    for (int sym_index=0; sym_index<symboltable.size(); sym_index++) {
+        if(symboltable[sym_index]->type==addr_symbol)
+            sum+=2;
+    }
+    for (int code_index=0; code_index<index;code_index++) {
+        if(codestream[code_index]=="\"")
+            sum++;
+    }
+    return sum;
+}
+
+//build symboltable
 void Assembler::buildsymbol()
 {
     int index;
@@ -147,23 +161,29 @@ void Assembler::buildsymbol()
         switch (type)
         {
             case addr_label:
-                if(searchsymbol(token, 0)==-1) // not define
+                if(searchsymbol(token,-2)==-1) // not define
                 {
-                    symbol sym;
-                    sym.symbolname=token;
-                    sym.label_addr=int(index-symboltable.size()*2);
-                    sym.type=addr_symbol;
+                    symbol *sym=new symbol;
+                    sym->symbolname=token;
+                    sym->label_addr=int(index-count_addrlabel(index));
+                    sym->type=addr_symbol;
                     symboltable.push_back(sym);
+                }
+                else //already define
+                {
+                    symbol *sym=getsymbol(token);
+                    sym->label_addr=int(index-count_addrlabel(index));
+                    sym->type=addr_symbol;
                 }
                 index++;
                 break;
             case var_symbol:
             {
-                if(searchsymbol(token, 0)==-1) //not define
+                if(searchsymbol(token,-1)==-1) //not define
                 {
-                    symbol sym;
-                    sym.symbolname=token;
-                    sym.define=false;
+                    symbol *sym=new symbol;
+                    sym->symbolname=token;
+                    sym->define=false;
                     symboltable.push_back(sym);
                 }
                 break;
