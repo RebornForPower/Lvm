@@ -465,6 +465,7 @@ void Lmachine::lvmrun(Assembler & assembler)
             switch (index) {
                 case OPHALT:
                 {
+                    cout<<endl;
                     lvmstatus=finished;
                     break;
                 }
@@ -901,7 +902,13 @@ void Lmachine::lvmrun(Assembler & assembler)
                             lvmcpu.pc=findend(strlabel);
                     }
                     else
-                        lvmcpu.pc++;
+                    {
+                        if (cmp1num>cmp2num) {
+                            lvmcpu.pc=addr_value-1;
+                        }
+                        else
+                            break;
+                    }
                     break;
                 }
                 case OPJNG:
@@ -963,12 +970,13 @@ void Lmachine::lvmrun(Assembler & assembler)
                     {
                         string str;
                         regoperand(regindex, assign, paraint, str);
-                        if (str=="\\n") {
+                        if (str=="\\n")
+                        {
                             cout<<endl;
                         }
                         else if(str=="\\s")
                         {
-                            cout<<" "<<endl;
+                            cout<<" ";
                         }
                         else
                             cout<<str;
