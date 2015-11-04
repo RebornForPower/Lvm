@@ -14,7 +14,27 @@ using namespace std;
 
 Assembler::Assembler()
 {
+    
 }
+// judge token is number or int
+bool Assembler::judge_number(string token)
+{
+    if(getsymbol_type(token)==int_var)
+        return true;
+    else
+    {
+        bool number=true;
+        for(auto str:token)
+        {
+            if (str>='0'&&str<='9')
+                ;
+            else
+                number=false;
+        }
+        return number;
+    }
+}
+
 string Assembler::int2string(int num)
 {
     stringstream s;
@@ -54,7 +74,7 @@ tokentype Assembler::lexer(string &token,int index)
             {
                 type=addr_label;
             }
-            else if(command==keynum&&codestream[index+1]!=":"&&codestream[index-1]!="\"")
+            else if(command==keynum&&codestream[index+1]!=":"&&codestream[index-1]!="\""&&codestream[index+1]!="[")
             {
                 int index;
                 index=searchreg(token);
@@ -66,6 +86,10 @@ tokentype Assembler::lexer(string &token,int index)
             else if (command==keynum&&codestream[index-1]=="\""&&codestream[index+1]=="\"")
             {
                 type=str;
+            }
+            else if (command==keynum&&codestream[index+1]=="[")
+            {
+                type=array_symbol;
             }
             else
             {
@@ -100,19 +124,25 @@ tokentype Assembler::lexer(string &token,int index)
     {
         type=str;
     }
+    else if(codestream[index]=="$")
+    {
+        type=array_end;
+    }
+    else if(codestream[index]=="["||codestream[index]=="]")
+        type=array_index;
     else
         type=unknow;
     return type;
 }
 
 /*
-parameter:
-    -1: sign=label
-    -2: sign=addr_label
-return :
-    -2  :already define
-    -1  :undefine
-    index : retun index
+ parameter:
+ -1: sign=label
+ -2: sign=addr_label
+ return :
+ -2  :already define
+ -1  :undefine
+ index : retun index
  */
 int Assembler::searchsymbol(string symbolname,int sign)
 {
@@ -143,8 +173,12 @@ int Assembler::count_addrlabel(int index)
             sum+=2;
     }
     for (int code_index=0; code_index<index;code_index++) {
-        if(codestream[code_index]=="\"")
+        if(codestream[code_index]=="\""||codestream[code_index]=="["||codestream[code_index]=="]")
+        {
             sum++;
+            if (codestream[code_index]=="[")
+                sum++;
+        }
     }
     return sum;
 }
@@ -307,6 +341,48 @@ void Assembler::assemblerrun()
                     pointer->next=node;
                     pointer=node;
                 }
+                Memory.push_back(head);
+                break;
+            }
+            case array_symbol:
+            {
+                MemoryNode head;
+                head.value='a';
+                head.next=NULL;
+                MemoryNode *pointer=&head;
+                //add array name
+                for (int index=0; index<token.length(); index++) {
+                    MemoryNode *node=new MemoryNode;
+                    node->value=token[index];
+                    node->next=NULL;
+                    pointer->next=node;
+                    pointer=node;
+                }
+                index++; // [
+                index++;
+                string indexnumber=codestream[index];
+                MemoryNode *node=new MemoryNode;
+                //array index
+                node->value='$';
+                node->next=nullptr;
+                pointer->next=node;
+                pointer=node;
+                for (int index=0; index<indexnumber.length(); index++) {
+                    MemoryNode *node=new MemoryNode;
+                    node->value=indexnumber[index];
+                    node->next=nullptr;
+                    pointer->next=node;
+                    pointer=node;
+                }
+                index++; // ]
+                Memory.push_back(head);
+                break;
+            }
+            case array_end:
+            {
+                MemoryNode head;
+                head.value='$';
+                head.next=NULL;
                 Memory.push_back(head);
                 break;
             }
