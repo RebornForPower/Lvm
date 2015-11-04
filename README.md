@@ -61,8 +61,8 @@
 |   OPINC      |        al=al+1              |  OPINC AL               |
 |   OPDEC      |        al=al-1              |  OPDEC AL               |
 |   OPCMPVB    |        cl cmp 5             |  OPCMPVB CL 5           |
-|   OPJG       |        if greatet jump      |  OPJG                   |
-|   OPJNG      |        if not greater jump  |  OPJNG                  |
+|   OPJG       | if greatet jump to label    |  OPJG  cmp1 cmp2 label  |
+|   OPJNG      |if not greater jump to label |  OPJNG cmp1 cmp2 label  |
 |   OPPRINTR   |        output al to terminal|  OPPRINTR AL            |
 |  OPPRINTRLIST|      output list to terminal|  OPPRINTRLIST list      |
 |  OPEND       |        block end            |  OPEND block1           |
