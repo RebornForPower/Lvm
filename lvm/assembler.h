@@ -25,6 +25,7 @@ public:
     tokentype lexer(string &token,int index);
     void buildsymbol();             //build symbol table
     string int2string(int num);
+    bool judge_number(string token);
     int searchcmd(string token);
     int searchreg(string token);
     int getopcode(string token);
