@@ -40,6 +40,7 @@ string strkey[]=
     "OPHALT",
     "OPCLEAR",
     "OPINIT",
+    "OPINITLIST",
     "OPASSIGN",
     "OPBINADD",
     "OPBINSUB",
@@ -60,10 +61,21 @@ string strkey[]=
     "OPJNG",
     "OPLESTR",
     "OPPRINTR",
+    "OPPRINTRLIST",
     "OPEND",
     "OPPAUSE",
     "OPERROR"
 };
+
+bool is_symbol(string symbolname)
+{
+    for(auto symbol:symboltable)
+    {
+        if(symbol->symbolname==symbolname)
+            return true;
+    }
+    return false;
+}
 
 symbol * getsymbol(string symbolname)
 {
@@ -79,4 +91,14 @@ symbol * getsymbol(string symbolname)
             continue;
     }
     return sym;
+}
+
+var_type getsymbol_type(string symbolname)
+{
+    for (auto symbol:symboltable) {
+        if (symbolname==symbol->symbolname) {
+            return symbol->type;
+        }
+    }
+    return error_type;
 }
