@@ -1,4 +1,3 @@
-//
 //  lmachine.cpp
 //  Lmachine
 //
@@ -46,24 +45,54 @@ int Lmachine::getregindex(MemoryNode reg)
 int Lmachine::getint(MemoryNode mem)
 {
     string num="";
-    MemoryNode *pointer=mem.next;
-    while (pointer!=NULL) {
-        num+=pointer->value;
+    int number=0;
+    if (mem.value=='a') {
+        MemoryNode *pointer=mem.next;
+        while (pointer->value!='$')
+            pointer=pointer->next;
         pointer=pointer->next;
+        while (pointer!=NULL) {
+            num+=pointer->value;
+            pointer=pointer->next;
+        }
+        if(is_symbol(num))
+            number=getsymbol(num)->int_value;
+        else
+            number=string2int(num);
+        return number;
     }
-    int number=string2int(num);
-    return number;
+    else
+    {
+        MemoryNode *pointer=mem.next;
+        while (pointer!=NULL) {
+            num+=pointer->value;
+            pointer=pointer->next;
+        }
+        number=string2int(num);
+        return number;
+    }
 }
 
 string Lmachine::getstring(MemoryNode mem)
 {
     string str="";
-    MemoryNode *pointer=mem.next;
-    while (pointer!=NULL) {
-        str+=pointer->value;
-        pointer=pointer->next;
+    if (mem.value=='a') {
+        MemoryNode *pointer=mem.next;
+        while (pointer->value!='$'&&pointer!=NULL) {
+            str+=pointer->value;
+            pointer=pointer->next;
+        }
+        return str;
     }
-    return str;
+    else
+    {
+        MemoryNode *pointer=mem.next;
+        while (pointer!=NULL) {
+            str+=pointer->value;
+            pointer=pointer->next;
+        }
+        return str;
+    }
 }
 
 string Lmachine::getdatavalue(int addr)
@@ -98,7 +127,7 @@ int Lmachine::findend(string addr_label)
     int index=0;
     for (index=0;index<Memory.size(); index++) {
         MemoryNode node=Memory[index];
-        if(node.value=='o'&&getcmdindex(node)==35)
+        if(node.value=='o'&&getcmdindex(node)==37)
         {
             index++;
             MemoryNode operand=Memory[index];
@@ -372,7 +401,7 @@ void Lmachine::readline()
 {
     int index,length;
     ifstream code;
-    code.open("/Users/Leviathan/Documents/Code/sumvm.txt");
+    code.open("/Users/Leviathan/Documents/Soo/sortlvm.txt");
     string line;
     while(getline(code,line))
     {
@@ -431,6 +460,14 @@ void Lmachine::readline()
             }
             //address label symbol
             else if(line[index]==':')
+            {
+                string token="";
+                token+=line[index];
+                index++;
+                codestream.push_back(token);
+            }
+            //array end symbol
+            else if(line[index]=='$')
             {
                 string token="";
                 token+=line[index];
@@ -515,14 +552,49 @@ void Lmachine::lvmrun(Assembler & assembler)
                     }
                     break;
                 }
-                case OPASSIGN:
+                case OPINITLIST:
                 {
                     lvmcpu.pc++;
+                    MemoryNode var=Memory[lvmcpu.pc];
+                    string var_name=getstring(var);
+                    lvmcpu.pc++;
+                    symbol *sym=getsymbol(var_name);
+                    if(sym->define==true)
+                    {
+                        cout<<"the variable "<<var_name<<" is already define !"<<endl;
+                        break;
+                    }
+                    sym->type=int_array;
+                    while (Memory[lvmcpu.pc].value!='$') {
+                        MemoryNode value=Memory[lvmcpu.pc];
+                        int number=getint(value);
+                        sym->array_value.push_back(number);
+                        lvmcpu.pc++;
+                    }
+                    break;
+                }
+                case OPASSIGN:
+                {
+                    string var_name,assign_name;
+                    int var_index=0,assign_index=0;
+                    lvmcpu.pc++;
                     MemoryNode variable=Memory[lvmcpu.pc];
-                    string var_name=getstring(variable);
+                    if (variable.value=='a') {
+                        var_name=getstring(variable);
+                        var_index=getint(variable);
+                    }
+                    else
+                        var_name=getstring(variable);
+                    symbol *var_sym=getsymbol(var_name);
                     lvmcpu.pc++;
                     MemoryNode assign_value=Memory[lvmcpu.pc];
-                    symbol *sym=getsymbol(var_name);
+                    if (assign_value.value=='a') {
+                        assign_name=getstring(assign_value);
+                        assign_index=getint(assign_value);
+                    }
+                    else
+                        assign_name=getstring(assign_value);
+                    symbol *assign_sym=getsymbol(assign_name);
                     //register
                     if(assign_value.value=='r')
                     {
@@ -531,15 +603,20 @@ void Lmachine::lvmrun(Assembler & assembler)
                         {
                             string str;
                             regoperand(regindex, assign, paraint, str);
-                            sym->str_value=str;
-                            sym->type=str_var;
+                            var_sym->str_value=str;
+                            var_sym->type=str_var;
                         }
                         else //number
                         {
                             int num;
                             regoperand(regindex, assign, num, parastr);
-                            sym->int_value=num;
-                            sym->type=int_var;
+                            if(var_sym->type==int_array)
+                                var_sym->array_value[index]=num;
+                            else
+                            {
+                                var_sym->int_value=num;
+                                var_sym->type=int_var;
+                            }
                         }
                     }
                     //value
@@ -549,28 +626,53 @@ void Lmachine::lvmrun(Assembler & assembler)
                         if(assign_value.value=='n')
                         {
                             int num=getint(assign_value);
-                            sym->int_value=num;
-                            sym->type=int_var;
+                            if (var_sym->type==int_array) {
+                                var_sym->array_value[index]=num;
+                            }
+                            else
+                            {
+                                var_sym->int_value=num;
+                                var_sym->type=int_var;
+                            }
                         }
                         //string
                         else if(assign_value.value=='s')
                         {
                             string str=getstring(assign_value);
-                            sym->str_value=str;
-                            sym->type=str_var;
+                            var_sym->str_value=str;
+                            var_sym->type=str_var;
                         }
+                        //variable
                         else if(assign_value.value=='v')
                         {
-                            symbol *strassign=getsymbol(getstring(assign_value));
-                            if(strassign->type==int_var)
+                            if(assign_sym->type==int_var)
                             {
-                                sym->int_value=strassign->int_value;
-                                sym->type=int_var;
+                                if (var_sym->type==int_array) {
+                                    var_sym->array_value[var_index]=assign_sym->int_value;
+                                }
+                                else
+                                {
+                                    var_sym->int_value=assign_sym->int_value;
+                                    var_sym->type=int_var;
+                                }
                             }
-                            else if(strassign->type==str_var)
+                            else if(assign_sym->type==str_var)
                             {
-                                sym->str_value=strassign->str_value;
-                                sym->type=str_var;
+                                var_sym->str_value=assign_sym->str_value;
+                                var_sym->type=str_var;
+                            }
+                        }
+                        //array value
+                        else if(assign_value.value=='a')
+                        {
+                            symbol *strassign=getsymbol(assign_name);
+                            if (variable.value=='a') {
+                                var_sym->array_value[var_index]=strassign->array_value[assign_index];
+                            }
+                            else
+                            {
+                                var_sym->int_value=strassign->array_value[assign_index];
+                                var_sym->type=int_var;
                             }
                         }
                     }
@@ -988,6 +1090,20 @@ void Lmachine::lvmrun(Assembler & assembler)
                         cout<<num<<endl;
                     }
                     break;
+                }
+                case OPPRINTRLIST:
+                {
+                    lvmcpu.pc++;
+                    MemoryNode variable=Memory[lvmcpu.pc];
+                    string var_name=getstring(variable);
+                    symbol *sym=getsymbol(var_name);
+                    if(sym->type==int_array)
+                    {
+                        for(auto value:sym->array_value)
+                            cout<<value<<" ";
+                    }
+                    break;
+                    
                 }
                 case OPEND:
                 {
