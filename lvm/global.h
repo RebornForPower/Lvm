@@ -17,12 +17,12 @@ using namespace std;
 
 typedef char byte;//byte
 #define memsize 1024 //1024 byte
-#define keynum 38
+#define keynum 40
 
 
 /*
-    Global Variable
-*/
+ Global Variable
+ */
 extern vector<string> codestream;
 extern byte memory[];
 extern byte data[];
@@ -47,10 +47,13 @@ enum tokentype
     reg,
     addr_label,
     var_symbol,
-    escape_symbol,
+    escape_symbol,  // \n ,\s ...
     number,
     str,
     quotes,        // "
+    array_symbol,
+    array_end,     // $
+    array_index,   // [ or ]
     unknow
 };
 
@@ -87,6 +90,7 @@ public:
     int int_value;
     string str_value;
     int label_addr; //addr_label address
+    vector<int> array_value;
     bool define;
     var_type type;
 };
@@ -166,6 +170,7 @@ enum key
     OPHALT,
     OPCLEAR,    //register=0
     OPINIT,     //id=register
+    OPINITLIST, //init int array
     OPASSIGN,   //id=reg/num
     OPBINADD,   //id1=id2+id3
     OPBINSUB,   //id1=id2-id3
@@ -184,16 +189,19 @@ enum key
     OPCMPVB,    //compare register and B
     OPJG,
     OPJNG,
-    OPLESTR,    //[B]=string
-    OPPRINTR,   //print register value to terminal
-    OPEND,      //end code block
-    OPPAUSE,    //pause
+    OPLESTR,        //[B]=string
+    OPPRINTR,       //print register value to terminal
+    OPPRINTRLIST,   //print array value to termial
+    OPEND,          //end code block
+    OPPAUSE,        //pause
     OPERROR
 };
 
 /*
-    Global Function
-*/
+ Global Function
+ */
+bool is_symbol(string symbolname);
 symbol * getsymbol(string symbolname);
+var_type getsymbol_type(string symbolname);
 
 #endif /* defined(__Lmachine__global__) */
