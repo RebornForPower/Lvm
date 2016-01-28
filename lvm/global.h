@@ -7,8 +7,8 @@
 //
 
 #pragma once
-#ifndef __Lmachine__global__
-#define __Lmachine__global__
+#ifndef _Lmachine_global_
+#define _Lmachine_global_
 
 #include <iostream>
 #include <string>
