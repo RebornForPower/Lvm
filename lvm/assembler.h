@@ -7,8 +7,8 @@
 //
 
 #pragma once
-#ifndef __Lmachine__assembler__
-#define __Lmachine__assembler__
+#ifndef _Lmachine__assembler_
+#define _Lmachine__assembler_
 
 #include <iostream>
 #include "global.h"
