@@ -7,8 +7,8 @@
 //
 
 #pragma once
-#ifndef __Lvm__lmachine__
-#define __Lvm__lmachine__
+#ifndef _Lvm_lmachine_
+#define _Lvm__lmachine_
 
 #include <iostream>
 #include <vector>
