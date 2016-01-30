@@ -7,8 +7,8 @@
 //
 
 #pragma once
-#ifndef _Lvm_lmachine_
-#define _Lvm__lmachine_
+#ifndef LMACHINE_H_
+#define LMACHINE_H_
 
 #include <iostream>
 #include <vector>
@@ -47,4 +47,4 @@ public:
     static string outfile;
     
 };
-#endif /* defined(__Lvm__lmachine__) */
+#endif /* defined(LMACHINE_H_) */
