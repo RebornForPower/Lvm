@@ -7,8 +7,8 @@
 //
 
 #pragma once
-#ifndef _Lmachine_global_
-#define _Lmachine_global_
+#ifndef GLOBAL_H_
+#define GLOBAL_H_
 
 #include <iostream>
 #include <string>
@@ -204,4 +204,4 @@ bool is_symbol(string symbolname);
 symbol * getsymbol(string symbolname);
 var_type getsymbol_type(string symbolname);
 
-#endif /* defined(__Lmachine__global__) */
+#endif /* defined(GLOBAL_H_) */
