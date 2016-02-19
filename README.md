@@ -12,24 +12,10 @@ A simple virtual machine based on cpu  instruction  set.Includes some DIY instru
 
 ##Example :
 
-###Source code:
-计算 1+2+3+4...+10=
+###[Bubble Sort](https://github.com/Leviathan1995/Lvm/blob/master/test/sort.txt):
 
-       start : OPCLEAR AL     #AL=0
-               OPCLEAR CL     #CL=0
-               OPLOADVB CL 1  #CL=1
-               OPLOADVB AL 1  #AL=1     put 1 to AL
-       add:    OPLOAD AL CL   #AL=CL
-               OPADDB AL 10   #AL=AL+[10]
-               OPSTOREB 10 AL #[10]=AL  
-               OPINC CL       #CL=CL+1
-               OPCMPVB CL 11  #CMP 11
-               OPJG    quit
-               OPJNG    add
-       quit:   OPPRINTR AL
-               OPHALT
                
-###Out:
+###Output:
 ![image](https://github.com/Leviathan1995/lvm/raw/master/pic.png)
 
 ##Syntax
