@@ -7,8 +7,8 @@
 //
 
 #include <iostream>
-#include "assembler.h"
-#include "lmachine.h"
+#include "lvm_assembler.h"
+#include "lvm_lmachine.h"
 using namespace std;
 
 int main() {

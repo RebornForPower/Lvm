@@ -9,7 +9,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include "assembler.h"
+#include "lvm_assembler.h"
 using namespace std;
 
 Assembler::Assembler()

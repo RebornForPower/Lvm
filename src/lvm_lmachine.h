@@ -7,14 +7,14 @@
 //
 
 #pragma once
-#ifndef LMACHINE_H_
-#define LMACHINE_H_
+#ifndef LVM_LMACHINE_H_
+#define LVM_LMACHINE_H_
 
 #include <iostream>
 #include <vector>
 #include <string>
-#include "assembler.h"
-#include "global.h"
+#include "lvm_assembler.h"
+#include "lvm_global.h"
 
 using namespace std;
 
@@ -47,4 +47,4 @@ public:
     static string outfile;
     
 };
-#endif /* defined(LMACHINE_H_) */
+#endif /* defined(LVM_LMACHINE_H_) */

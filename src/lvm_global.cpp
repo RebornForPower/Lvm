@@ -7,7 +7,7 @@
 //
 
 #include <iostream>
-#include "global.h"
+#include "lvm_global.h"
 #include <vector>
 #include <string>
 using namespace std;

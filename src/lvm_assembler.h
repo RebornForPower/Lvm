@@ -7,11 +7,11 @@
 //
 
 #pragma once
-#ifndef ASSEMBLER_H_
-#define ASSEMBLER_H_
+#ifndef LVM_ASSEMBLER_H_
+#define LVM_ASSEMBLER_H_
 
 #include <iostream>
-#include "global.h"
+#include "lvm_global.h"
 using namespace std;
 
 
@@ -30,4 +30,4 @@ public:
     int searchreg(string token);
     int getopcode(string token);
 };
-#endif /* defined(ASSEMBLER_H_) */
+#endif /* defined(LVM_ASSEMBLER_H_) */

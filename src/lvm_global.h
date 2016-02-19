@@ -7,8 +7,8 @@
 //
 
 #pragma once
-#ifndef GLOBAL_H_
-#define GLOBAL_H_
+#ifndef LVM_GLOBAL_H_
+#define LVM_GLOBAL_H_
 
 #include <iostream>
 #include <string>
@@ -199,9 +199,9 @@ enum key
 
 /*
  Global Function
- */
+*/
 bool is_symbol(string symbolname);
 symbol * getsymbol(string symbolname);
 var_type getsymbol_type(string symbolname);
 
-#endif /* defined(GLOBAL_H_) */
+#endif /* defined(LVM_GLOBAL_H_) */

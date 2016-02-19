@@ -10,7 +10,7 @@
 #include <sstream>
 #include <cstdio>
 #include <algorithm>
-#include "lmachine.h"
+#include "lvm_lmachine.h"
 using namespace std;
 
 Lmachine::Lmachine()
@@ -401,7 +401,7 @@ void Lmachine::readline()
 {
     int index,length;
     ifstream code;
-    code.open("/Users/Leviathan/Documents/Soo/sortlvm.txt");
+    code.open(infile);
     string line;
     while(getline(code,line))
     {
@@ -1111,7 +1111,7 @@ void Lmachine::lvmrun(Assembler & assembler)
                     lvmcpu.pc++;
                     break;
                 }
-                case OPPAUSE:
+                case OPPAUSE: 
                     break;
                 default:
                     break;
