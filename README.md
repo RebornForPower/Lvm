@@ -30,7 +30,7 @@ A simple virtual machine based on cpu  instruction  set.Includes some DIY instru
                OPHALT
                
 ###Out:
-![image](https://github.com/Leviathan1995/lvm/raw/master/span.png)
+![image](https://github.com/Leviathan1995/lvm/raw/master/pic.png)
 
 ##Syntax
 - 注释使用 '#'
