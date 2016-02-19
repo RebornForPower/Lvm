@@ -14,8 +14,6 @@ A simple virtual machine based on cpu  instruction  set.Includes some DIY instru
 
 ###[Bubble Sort](https://github.com/Leviathan1995/Lvm/blob/master/test/sort.txt):
 
-               
-###Output:
 ![image](https://github.com/Leviathan1995/lvm/raw/master/pic.png)
 
 ##Syntax
