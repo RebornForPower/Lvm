@@ -2,26 +2,26 @@
 
 A simple virtual machine based on cpu  instruction  set.Includes some DIY instructions,and it is still updating.
 
-##Building and Running :
+## Building and Running :
 
-###Linux,*nix,Mac OSX:
+### Linux,*nix,Mac OSX:
 
        $ git clone https://github.com/Leviathan1995/lvm.git
        $ make
        $ ./lvm
 
-##Example :
+## Example :
 
-###[Bubble Sort](https://github.com/Leviathan1995/Lvm/blob/master/test/sort.txt):
+### [Bubble Sort](https://github.com/Leviathan1995/Lvm/blob/master/test/sort.txt):
 
 ![image](https://github.com/Leviathan1995/lvm/raw/master/pic.png)
 
-##Syntax
+## Syntax
 - 注释使用 '#'
 - 格式: 操作码 操作数1 操作数2
 - 优先级: 寄存器需要在立即数或内存地址前面 例如 OPADDB AL [10]
               
-##Support Instruction:
+## Support Instruction:
 
 | Instruction  |      Explanation            |          Example        |
 | ------------ | --------------------------- | ------------------------|
